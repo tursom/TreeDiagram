@@ -20,6 +20,8 @@ dependencies {
 
     compile 'org.xerial:sqlite-jdbc:3.21.0.1'
     compile "com.google.code.gson:gson:2.8.2"
+    compile group: 'javax.mail', name: 'mail', version: '1.4.1'
+    compile group: 'com.sun.mail', name: 'javax.mail', version: '1.5.1'
 }
 
 compileKotlin {
