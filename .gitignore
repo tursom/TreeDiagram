@@ -10,3 +10,6 @@ gen
 .gradle
 build
 gradle
+将删除 src/main/java/
+将删除 src/main/resources/
+将删除 src/test/

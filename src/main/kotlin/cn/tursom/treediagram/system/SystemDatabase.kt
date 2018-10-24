@@ -4,6 +4,6 @@ import cn.tursom.database.sqlite.SQLiteHelper
 
 object SystemDatabase {
 	private val classPath = SystemDatabase::class.java.getResource("/").path!!
-	private val baseName = "${classPath}TreeDiagram"
+	val baseName = "${classPath}TreeDiagram.db"
 	val database = SQLiteHelper(baseName)
 }

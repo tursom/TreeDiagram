@@ -22,9 +22,6 @@ dependencies {
     compile "com.google.code.gson:gson:2.8.2"
     compile group: 'javax.mail', name: 'mail', version: '1.4.1'
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.5.1'
-//    compile group: 'org.apache.tomcat', name: 'tomcat-api', version: '8.5.34'
-//    compile group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '8.5.34'
-// https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jsp-api
     compile group: 'org.apache.tomcat', name: 'tomcat-jsp-api', version: '8.5.34'
 }
 

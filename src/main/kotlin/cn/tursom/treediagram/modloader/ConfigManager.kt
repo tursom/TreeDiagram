@@ -14,7 +14,7 @@ class ConfigManager(private val file: String?) {
 		outputStream.write(Gson().toJson(config).toByteArray())
 	}
 	
-	fun <T : Any> getObject(clazz: Class<T>): T? {
+	fun <T : Any> toClass(clazz: Class<T>): T? {
 		var configDataJson: T? = null
 		val configFile = File(file)
 		if (configFile.exists()) {
@@ -28,7 +28,7 @@ class ConfigManager(private val file: String?) {
 		return configDataJson
 	}
 	
-	inline fun <reified T : Any> getObject(): T? {
-		return getObject(T::class.java)
+	inline fun <reified T : Any> toClass(): T? {
+		return toClass(T::class.java)
 	}
 }

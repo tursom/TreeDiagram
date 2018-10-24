@@ -1,4 +1,4 @@
-<%--
+<%@ page import="cn.tursom.treediagram.system.SystemDatabase" %><%--
   Created by IntelliJ IDEA.
   User: tursom
   Date: 18-10-24
@@ -7,4 +7,5 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
+    out.print(SystemDatabase.INSTANCE.getBaseName());
 %>

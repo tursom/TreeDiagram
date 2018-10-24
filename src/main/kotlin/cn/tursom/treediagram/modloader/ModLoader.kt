@@ -15,7 +15,7 @@ class ModLoader {
 	private val myClassLoader: ClassLoader?
 
 	constructor(config: ConfigManager, loadInstantly: Boolean = true) {
-		configData = config.getObject()!!
+		configData = config.toClass()!!
 		className = configData.classname!!
 		myClassLoader = try {
 			val file = File(configData.path!!)
