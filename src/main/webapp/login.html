@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>login test</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        function submit() {
+            var username = $("#username").innerHTML;
+            $("#output").innerHTML = username;
+        }
+    </script>
 </head>
 <body>
+<input id="username" type="text" height="用户名"/>
+<input id="password" type="password" height="密码"/>
+<input type="submit"/>
+<p id="output"></p>
 </body>
 </html>

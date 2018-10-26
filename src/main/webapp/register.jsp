@@ -1,4 +1,4 @@
-<%--
+<%@ page import="static cn.tursom.treediagram.usermanage.RegisterKt.register" %><%--
   Created by IntelliJ IDEA.
   User: tursom
   Date: 18-10-24
@@ -7,8 +7,5 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
-    //获取用户名
-    String username = request.getParameter("username");
-    //获取密码（MD5过后）
-    String password = request.getParameter("password");
+    out.print(register(request));
 %>

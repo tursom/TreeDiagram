@@ -16,7 +16,7 @@ import com.google.gson.Gson
  */
 
 data class TokenData(
-		val usr: String,  //用户名
+		val usr: String?,  //用户名
 		val tim: Long? = System.currentTimeMillis(),  //签发时间
 		val exp: Long? = 1000 * 60 * 60 * 24 * 3  //过期时间
 ) {
@@ -41,7 +41,7 @@ data class TokenData(
 		 * @param token 需要验证的整个token
 		 * @return 验证结果，如果失败返回null，成功则返回一个TokenData对象
 		 */
-		fun paraseToken(token: String): TokenData? {
+		fun parseToken(token: String): TokenData? {
 			val data = token.split('.')
 			if (data.size != 3) return null
 			return if ("${data[0]}.${data[1]}.$secretKey".digest(data[0].base64decode()) == data[2]) {

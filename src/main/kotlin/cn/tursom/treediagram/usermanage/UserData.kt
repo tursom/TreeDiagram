@@ -3,15 +3,12 @@ package cn.tursom.treediagram.usermanage
 import cn.tursom.database.SQLAdapter
 import cn.tursom.treediagram.system.SystemDatabase
 
-data class UserData(val username: String?, val password: String?, val level: String?) {
-	companion object {
-		init {
-			SystemDatabase.database.createTable(userTable, arrayOf("username TEXT not null", "password TEXT not null", "level TEXT not null"))
-		}
-	}
-}
+data class UserData(val username: String?, val password: String?, val level: String?)
 
-private const val userTable = "users"
+internal val userTable = run {
+	SystemDatabase.database.createTable("users", arrayOf("username TEXT not null", "password TEXT not null", "level TEXT not null"))
+	"users"
+}
 
 fun findUser(username: String): UserData? {
 	val adapter = SQLAdapter(UserData::class.java)

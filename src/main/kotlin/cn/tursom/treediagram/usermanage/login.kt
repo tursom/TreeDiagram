@@ -11,9 +11,8 @@ fun login(username: String?, password: String?): String {
 		"{\"state\":false,\"code\":\"password is null\"}"
 	} else {
 		//查询用户数据
-		Class.forName("cn.tursom.treediagram.usermanage.UserData")
 		val userData = findUser(username)
-		if ("$password$username$password$username".sha256() == userData?.password) {
+		if ("$username$password$username$password".sha256() == userData?.password) {
 			//验证成功，签发token
 			"{\"state\":true,\"code\":\"${TokenData.getToken(username)}\"}"
 		} else {
