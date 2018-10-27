@@ -2,6 +2,7 @@ package cn.tursom.treediagram.basemod.systemmod
 
 import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.tools.fromJson
+import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
 import java.io.UnsupportedEncodingException
@@ -17,18 +18,18 @@ import javax.mail.internet.*
 
 
 class SingleEmail : BaseMod() {
-	override fun handle(id: Int, message: String): String {
+	override fun handle(token: TokenData, message: String?): Any? {
 		logger.info(message)
-		val mailMessage = Gson().fromJson<EmailData>(message)
+		val mailMessage = Gson().fromJson<EmailData>(message!!)
 		try {
 			sendMail(mailMessage)
 		} catch (e: Exception) {
 			e.printStackTrace()
-			return "false"
+			return "${e::class.java}: ${e.message}"
 		}
 		return "true"
 	}
-
+	
 	fun sendMail(message: EmailData) {
 		val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试
@@ -40,7 +41,7 @@ class SingleEmail : BaseMod() {
 		sf.isTrustAllHosts = true
 		props["mail.smtp.ssl.socketFactory"] = sf
 		props["mail.smtp.ssl.enable"] = "true"
-
+		
 		val session = Session.getInstance(props)
 		//邮件内容部分
 		val msg = MimeMessage(session)
@@ -55,7 +56,7 @@ class SingleEmail : BaseMod() {
 			textPart.setText(message.text)
 			multipart.addBodyPart(textPart)
 		}
-
+		
 		//添加图片
 		message.image?.forEach {
 			//创建用于保存图片的MimeBodyPart对象，并将它保存到MimeMultipart中
@@ -69,7 +70,7 @@ class SingleEmail : BaseMod() {
 			gifBodyPart.contentID = it.key   //cid的值
 			multipart.addBodyPart(gifBodyPart)
 		}
-
+		
 		//添加附件
 		message.attachment?.forEach { fileName ->
 			val adjunct = MimeBodyPart()
@@ -78,9 +79,9 @@ class SingleEmail : BaseMod() {
 			adjunct.fileName = changeEncode(fileDataSource.name)
 			multipart.addBodyPart(adjunct)
 		}
-
+		
 		msg.setContent(multipart)
-
+		
 		//邮件主题
 		msg.subject = message.subject
 		//邮件发送者
@@ -88,11 +89,11 @@ class SingleEmail : BaseMod() {
 		//发送邮件
 		val transport = session.transport
 		transport.connect(message.host!!, message.name!!, message.password!!)
-
+		
 		transport.sendMessage(msg, arrayOf<Address>(InternetAddress(message.to)))
 		transport.close()
 	}
-
+	
 	/**
 	 * 进行base64加密，防止中文乱码
 	 */
@@ -106,7 +107,7 @@ class SingleEmail : BaseMod() {
 		}
 		return string
 	}
-
+	
 	companion object {
 		val logger = Logger.getLogger("SingleEmail")!!
 	}
@@ -115,19 +116,19 @@ class SingleEmail : BaseMod() {
 data class EmailData(val host: String?, val port: Int?, val name: String?, val password: String?, val from: String?,
                      val to: String?, val subject: String?, val html: String?, val text: String? = null,
                      val image: Map<String, String>? = null, val attachment: Array<String>? = null) {
-
+	
 	fun toJson() = Gson().toJson(this)
-
+	
 	fun fromJson(json: String) = Gson().fromJson<EmailData>(json)
-
+	
 	fun send() = sendMail(this)
-
+	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
-
+		
 		other as EmailData
-
+		
 		if (host != other.host) return false
 		if (port != other.port) return false
 		if (name != other.name) return false
@@ -139,10 +140,10 @@ data class EmailData(val host: String?, val port: Int?, val name: String?, val p
 		if (text != other.text) return false
 		if (image != other.image) return false
 		if (!Arrays.equals(attachment, other.attachment)) return false
-
+		
 		return true
 	}
-
+	
 	override fun hashCode(): Int {
 		var result = host?.hashCode() ?: 0
 		result = 31 * result + (port ?: 0)
@@ -170,7 +171,7 @@ fun sendMail(message: EmailData) {
 	sf.isTrustAllHosts = true
 	props["mail.smtp.ssl.enable"] = "true"
 	props["mail.smtp.ssl.socketFactory"] = sf
-
+	
 	val session = Session.getInstance(props)
 	//邮件内容部分
 	val msg = MimeMessage(session)
@@ -214,7 +215,7 @@ fun sendMail(message: EmailData) {
 	//发送邮件
 	val transport = session.transport
 	transport.connect(message.host, message.name, message.password)
-
+	
 	transport.sendMessage(msg, arrayOf<Address>(InternetAddress(message.to)))
 	transport.close()
 }

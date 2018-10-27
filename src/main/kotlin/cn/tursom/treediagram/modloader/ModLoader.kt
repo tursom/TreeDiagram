@@ -9,18 +9,23 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.logging.Logger
 
+/**
+ * 用于加载模组
+ * 模组可由网络或者本地加载
+ * 亦可将配置写入一个文件中
+ */
 class ModLoader {
 	private val configData: ClassData
 	private val className: Array<String>
 	private val myClassLoader: ClassLoader?
-
+	
 	constructor(config: ConfigManager, loadInstantly: Boolean = true) {
-		configData = config.toClass()!!
+		configData = config.getData()!!
 		className = configData.classname!!
 		myClassLoader = try {
 			val file = File(configData.path!!)
 			if (!file.exists()) throw FileNotFoundException()
-
+			
 			val url = file.toURI().toURL()
 			URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
 		} catch (e: Exception) {
@@ -30,7 +35,7 @@ class ModLoader {
 			load()
 		}
 	}
-
+	
 	constructor(string: String, loadInstantly: Boolean = true) {
 		configData = Gson().fromJson(string)
 		className = configData.classname!!
@@ -38,7 +43,7 @@ class ModLoader {
 			configData.path != null -> {
 				val file = File(configData.path)
 				if (!file.exists()) throw FileNotFoundException()
-
+				
 				val url = file.toURI().toURL()
 				URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
 			}
@@ -49,10 +54,10 @@ class ModLoader {
 			load()
 		}
 	}
-
-
+	
+	
 	fun load(): Boolean {
-		var allSuccessful: Boolean = true
+		var allSuccessful = true
 		className.forEach { className ->
 			try {
 				val loadClass = myClassLoader!!.loadClass(className)
@@ -64,28 +69,28 @@ class ModLoader {
 		}
 		return allSuccessful
 	}
-
+	
 	companion object {
 		val logger = Logger.getLogger("ModLoader")
 		val modMap = HashMap<Int, String>()
 		val functionMap = HashMap<String?, BaseMod>()
-
+		
 		fun loadMod(mod: BaseMod) {
 			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
 			modMap[mod.id] = mod::class.java.name
 			functionMap[mod.functionName] = mod
 			functionMap[mod.functionName.split('.').last()] = mod
 		}
-
+		
 		fun loadMod(mod: String) {
 			val loadClass = Class.forName(mod)
 			val thisClass = loadClass.getConstructor().newInstance() as BaseMod
 			loadMod(thisClass)
 		}
-
+		
 		private fun loadBaseMod() {
 			val baseModList = arrayOf(
-					"cn.tursom.smartdata.basemod.systemmod.Println",
+					"cn.tursom.smartdata.basemod.systemmod.Echo",
 					"cn.tursom.smartdata.basemod.systemmod.Exit",
 					"cn.tursom.smartdata.basemod.systemmod.SingleEmail",
 					"cn.tursom.smartdata.basemod.systemmod.GroupEmail",
@@ -95,7 +100,7 @@ class ModLoader {
 				ModLoader.loadMod(it)
 			}
 		}
-
+		
 		init {
 			loadBaseMod()
 		}

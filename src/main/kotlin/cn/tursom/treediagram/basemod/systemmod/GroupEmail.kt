@@ -2,10 +2,10 @@ package cn.tursom.treediagram.basemod.systemmod
 
 import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.tools.fromJson
+import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
 import java.io.UnsupportedEncodingException
-import java.net.Socket
 import java.net.URL
 import java.nio.charset.Charset
 import java.util.*
@@ -18,16 +18,16 @@ import kotlin.collections.ArrayList
 
 
 class GroupEmail : BaseMod() {
-	override fun handle(id: Int, message: String): String {
+	override fun handle(token: TokenData, message: String?): Any? {
 		try {
-			val groupEmailData = Gson().fromJson<GroupEmailData>(message)
+			val groupEmailData = Gson().fromJson<GroupEmailData>(message!!)
 			sendMail(groupEmailData)
 		} catch (e: Exception) {
-			return "false"
+			return "${e::class.java}: ${e.message}"
 		}
 		return "true"
 	}
-
+	
 	fun sendMail(message: GroupEmailData) {
 		val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试
@@ -39,7 +39,7 @@ class GroupEmail : BaseMod() {
 		sf.isTrustAllHosts = true
 		props["mail.smtp.ssl.enable"] = "true"
 		props["mail.smtp.ssl.socketFactory"] = sf
-
+		
 		val session = Session.getInstance(props)
 		//邮件内容部分
 		val msg = MimeMessage(session)
@@ -84,7 +84,7 @@ class GroupEmail : BaseMod() {
 		transport.sendMessage(msg, addressArray.toTypedArray())
 		transport.close()
 	}
-
+	
 	/**
 	 * 进行base64加密，防止中文乱码
 	 */
@@ -105,20 +105,20 @@ data class GroupEmailData(
 		val to: Array<String>?, val subject: String?, val html: String?, val text: String? = null,
 		val image: Map<String, String>? = null, val attachment: Array<String>? = null
 ) {
-
-
+	
+	
 	fun toJson() = Gson().toJson(this)
-
+	
 	fun fromJson(json: String) = Gson().fromJson<GroupEmailData>(json)
-
+	
 	fun send() = sendMail(this)
-
+	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
-
+		
 		other as GroupEmailData
-
+		
 		if (host != other.host) return false
 		if (port != other.port) return false
 		if (name != other.name) return false
@@ -130,10 +130,10 @@ data class GroupEmailData(
 		if (text != other.text) return false
 		if (image != other.image) return false
 		if (!Arrays.equals(attachment, other.attachment)) return false
-
+		
 		return true
 	}
-
+	
 	override fun hashCode(): Int {
 		var result = host?.hashCode() ?: 0
 		result = 31 * result + (port ?: 0)
@@ -161,7 +161,7 @@ fun sendMail(message: GroupEmailData) {
 	sf.isTrustAllHosts = true
 	props["mail.smtp.ssl.enable"] = "true"
 	props["mail.smtp.ssl.socketFactory"] = sf
-
+	
 	val session = Session.getInstance(props)
 	//邮件内容部分
 	val msg = MimeMessage(session)

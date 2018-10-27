@@ -1,7 +1,7 @@
 package cn.tursom.treediagram.usermanage
 
 import cn.tursom.database.SQLAdapter
-import cn.tursom.treediagram.system.SystemDatabase
+import cn.tursom.treediagram.SystemDatabase
 
 data class UserData(val username: String?, val password: String?, val level: String?)
 

@@ -1,4 +1,4 @@
-package cn.tursom.treediagram.system
+package cn.tursom.treediagram
 
 import cn.tursom.database.sqlite.SQLiteHelper
 
