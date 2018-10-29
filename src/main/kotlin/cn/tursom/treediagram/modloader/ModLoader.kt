@@ -1,69 +1,75 @@
 package cn.tursom.treediagram.modloader
 
-import cn.tursom.tools.fromJson
 import cn.tursom.treediagram.basemod.BaseMod
-import com.google.gson.Gson
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.*
 import java.util.logging.Logger
 
 /**
  * 用于加载模组
  * 模组可由网络或者本地加载
  * 亦可将配置写入一个文件中
+ * 会优先尝试从本地加载模组
+ * 本地文件不存在则会从网络加载模组
+ *
+ * @param config 配置管理器
+ * @param loadInstantly 是否立即加载，默认为真
  */
-class ModLoader {
-	private val configData: ClassData
-	private val className: Array<String>
-	private val myClassLoader: ClassLoader?
+class ModLoader(config: ConfigManager, private val user: String? = null, loadInstantly: Boolean = true) {
+	//配置数据
+	private val configData: ClassData = config.getData()!!
+	//要加载的类名
+	private val className: Array<String> = configData.classname!!
+	//类加载器
+	private val myClassLoader: ClassLoader? = try {
+		val file = File(configData.path!!)
+		//如果文件不存在，抛出一个文件不存在异常
+		if (!file.exists()) throw FileNotFoundException()
+		val url = file.toURI().toURL()
+		URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
+	} catch (e: Exception) {
+		//从文件加载模组失败，尝试从网络加载模组
+		URLClassLoader(arrayOf(URL(configData.url!!)), Thread.currentThread().contextClassLoader)
+	}
 	
-	constructor(config: ConfigManager, loadInstantly: Boolean = true) {
-		configData = config.getData()!!
-		className = configData.classname!!
-		myClassLoader = try {
-			val file = File(configData.path!!)
-			if (!file.exists()) throw FileNotFoundException()
-			
-			val url = file.toURI().toURL()
-			URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
-		} catch (e: Exception) {
-			URLClassLoader(arrayOf(URL(configData.url!!)), Thread.currentThread().contextClassLoader)
-		}
+	init {
+		//如果需要立即加载模组
+		//则会在对象构造时自动加载模组
 		if (loadInstantly) {
+			//自动加载模组
 			load()
 		}
 	}
 	
-	constructor(string: String, loadInstantly: Boolean = true) {
-		configData = Gson().fromJson(string)
-		className = configData.classname!!
-		myClassLoader = when {
-			configData.path != null -> {
-				val file = File(configData.path)
-				if (!file.exists()) throw FileNotFoundException()
-				
-				val url = file.toURI().toURL()
-				URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
-			}
-			configData.url != null -> URLClassLoader(arrayOf(URL(configData.url)), Thread.currentThread().contextClassLoader)
-			else -> Thread.currentThread().contextClassLoader
-		}
-		if (loadInstantly) {
-			load()
-		}
-	}
+	/**
+	 * 辅助构造函数
+	 * config是一个ClassData类的json格式对象
+	 */
+	constructor(config: String, user: String? = null, loadInstantly: Boolean = true) : this(ConfigManager(config), user, loadInstantly)
 	
-	
+	/**
+	 * 手动加载模组
+	 * @return 是否所有的模组都加载成功
+	 */
 	fun load(): Boolean {
+		//是否所有的模组都加载成功
 		var allSuccessful = true
 		className.forEach { className ->
 			try {
-				val loadClass = myClassLoader!!.loadClass(className)
-				val thisClass = loadClass.getConstructor().newInstance() as BaseMod
-				loadMod(thisClass)
+				//获取一个指定模组的对象
+				val modClass = myClassLoader!!.loadClass(className)
+				val modObject = modClass.getConstructor().newInstance() as BaseMod
+				//加载模组
+				if (user == null)
+					loadMod(modObject)
+				else {
+					loadMod(user, modObject)
+				}
 			} catch (e: NoSuchMethodException) {
+				//如果失败，将标志位置否
 				allSuccessful = false
 			}
 		}
@@ -71,38 +77,59 @@ class ModLoader {
 	}
 	
 	companion object {
-		val logger = Logger.getLogger("ModLoader")
-		val modMap = HashMap<Int, String>()
-		val functionMap = HashMap<String?, BaseMod>()
-		
-		fun loadMod(mod: BaseMod) {
-			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
-			modMap[mod.id] = mod::class.java.name
-			functionMap[mod.functionName] = mod
-			functionMap[mod.functionName.split('.').last()] = mod
-		}
-		
-		fun loadMod(mod: String) {
-			val loadClass = Class.forName(mod)
-			val thisClass = loadClass.getConstructor().newInstance() as BaseMod
-			loadMod(thisClass)
-		}
-		
-		private fun loadBaseMod() {
-			val baseModList = arrayOf(
-					"cn.tursom.smartdata.basemod.systemmod.Echo",
-					"cn.tursom.smartdata.basemod.systemmod.Exit",
-					"cn.tursom.smartdata.basemod.systemmod.SingleEmail",
-					"cn.tursom.smartdata.basemod.systemmod.GroupEmail",
-					"cn.tursom.smartdata.basemod.systemmod.MultipleEmail",
-					"cn.tursom.smartdata.basemod.systemmod.ModLoader")
-			baseModList.forEach {
-				ModLoader.loadMod(it)
+		private val logger = Logger.getLogger("ModLoader")!!
+		val systemModMap by lazy {
+			val modMap = Hashtable<String, BaseMod>()
+			//系统模组列表
+			val systemModList = arrayOf(
+					"cn.tursom.treediagram.basemod.systemmod.Echo",
+					"cn.tursom.treediagram.basemod.systemmod.SingleEmail",
+					"cn.tursom.treediagram.basemod.systemmod.GroupEmail",
+					"cn.tursom.treediagram.basemod.systemmod.MultipleEmail",
+					"cn.tursom.treediagram.basemod.systemmod.ModLoader")
+			//加载系统模组
+			systemModList.forEach { modName ->
+				//获取模组对象
+				val modClass = Class.forName(modName)
+				val modObject = modClass.getConstructor().newInstance() as BaseMod
+				//输出日志信息
+				logger.info("ModLoader: loading mod: ${modName::class.java.name}")
+				//将模组的信息加载到系统中
+				modMap[modObject.modName] = modObject
+				modMap[modObject.modName.split('.').last()] = modObject
 			}
+			modMap
 		}
 		
-		init {
-			loadBaseMod()
+		val userModMapMap: Hashtable<String, Hashtable<String, BaseMod>> = Hashtable()
+		
+		/**
+		 * 加载模组
+		 * 将模组的注册信息加载进系统中
+		 */
+		fun loadMod(mod: BaseMod) {
+			//输出日志信息
+			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
+			//将模组的信息加载到系统中
+			systemModMap[mod.modName] = mod
+			systemModMap[mod.modName.split('.').last()] = mod
+		}
+		
+		/**
+		 * 加载模组
+		 * 将模组的注册信息加载进系统中
+		 */
+		fun loadMod(user: String, mod: BaseMod) {
+			//输出日志信息
+			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
+			//将模组的信息加载到系统中
+			val userModMap = (userModMapMap[user] ?: run {
+				val modMap = Hashtable<String, BaseMod>()
+				userModMapMap[user] = modMap
+				modMap
+			})
+			userModMap[mod.modName] = mod
+			userModMap[mod.modName.split('.').last()] = mod
 		}
 	}
 }

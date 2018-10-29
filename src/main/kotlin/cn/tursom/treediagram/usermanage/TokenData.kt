@@ -38,7 +38,7 @@ data class TokenData(
 		 */
 		fun getToken(username: String): String {
 			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username)).base64()}"
-			return "$body.${String("$body.$secretKey".toByteArray().md5()!!.base64())}"
+			return "$body.${"$body.$secretKey".md5()}"
 		}
 		
 		/**
@@ -51,7 +51,7 @@ data class TokenData(
 			val data = token.split('.')
 			return when {
 				data.size != 3 -> null
-				"${data[0]}.${data[1]}.$secretKey".digest(data[0].base64decode()) == data[2].base64decode() -> try {
+				"${data[0]}.${data[1]}.$secretKey".digest(data[0].base64decode()) == data[2] -> try {
 					gson.fromJson(data[1].base64decode(), TokenData::class.java)
 				} catch (e: Exception) {
 					null

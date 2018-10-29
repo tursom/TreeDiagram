@@ -4,13 +4,14 @@
   Time: 下午8:07
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page session="false" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>login test</title>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-    <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+    <script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
     <script src="https://cdn.bootcss.com/js-sha256/0.9.0/sha256.min.js"></script>
     <script>function ajax(page) {
         var username = document.getElementById("username").value;

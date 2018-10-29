@@ -1,102 +1,46 @@
 package cn.tursom.treediagram.basemod.systemmod
 
+import cn.tursom.tools.base64
 import cn.tursom.treediagram.basemod.BaseMod
-import cn.tursom.tools.fromJson
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
-import java.io.UnsupportedEncodingException
 import java.net.URL
-import java.nio.charset.Charset
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.Address
 import javax.mail.Session
-import javax.mail.internet.*
-import kotlin.collections.ArrayList
-
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeBodyPart
+import javax.mail.internet.MimeMessage
+import javax.mail.internet.MimeMultipart
 
 class GroupEmail : BaseMod() {
-	override fun handle(token: TokenData, message: String?): Any? {
+	override fun handle(token: TokenData, request: Map<String, Array<String>>): Any? {
 		try {
-			val groupEmailData = Gson().fromJson<GroupEmailData>(message!!)
-			sendMail(groupEmailData)
+			val groupEmailData = GroupEmailData(
+					request["host"]?.get(0),
+					request["port"]?.get(0)?.toInt(),
+					request["name"]?.get(0),
+					request["password"]?.get(0),
+					request["from"]?.get(0),
+					gson.fromJson(request["to"]?.get(0), Array<String>::class.java),
+					request["subject"]?.get(0),
+					request["html"]?.get(0),
+					request["text"]?.get(0),
+					gson.fromJson(request["image"]?.get(0), Image::class.java),
+					gson.fromJson(request["attachment"]?.get(0), Array<String>::class.java)
+			)
+			groupEmailData.send()
 		} catch (e: Exception) {
 			return "${e::class.java}: ${e.message}"
 		}
 		return "true"
 	}
 	
-	fun sendMail(message: GroupEmailData) {
-		val props = Properties()
-//		props["mail.debug"] = "true"  // 开启debug调试
-		props["mail.smtp.auth"] = "true"  // 发送服务器需要身份验证
-		props["mail.smtp.host"] = message.host  // 设置邮件服务器主机名
-		props["mail.transport.protocol"] = "smtps"  // 发送邮件协议名称
-		props["mail.smtp.port"] = message.port
-		val sf = MailSSLSocketFactory()
-		sf.isTrustAllHosts = true
-		props["mail.smtp.ssl.enable"] = "true"
-		props["mail.smtp.ssl.socketFactory"] = sf
-		
-		val session = Session.getInstance(props)
-		//邮件内容部分
-		val msg = MimeMessage(session)
-		val multipart = MimeMultipart()
-		// 添加文本
-		val textPart = MimeBodyPart()
-		textPart.setText(message.text)
-		multipart.addBodyPart(textPart)
-		//添加图片
-		message.image?.forEach {
-			//创建用于保存图片的MimeBodyPart对象，并将它保存到MimeMultipart中
-			val gifBodyPart = MimeBodyPart()
-			if (it.value.startsWith("http://") or it.value.startsWith("https://")) {
-				gifBodyPart.dataHandler = DataHandler(URL(it.value))
-			} else {
-				val fds = FileDataSource(it.value)//图片所在的目录的绝对路径
-				gifBodyPart.dataHandler = DataHandler(fds)
-			}
-			gifBodyPart.contentID = it.key   //cid的值
-			multipart.addBodyPart(gifBodyPart)
-		}
-		//添加附件
-		message.attachment?.forEach { fileName ->
-			val adjunct = MimeBodyPart()
-			val fileDataSource = FileDataSource(fileName)
-			adjunct.dataHandler = DataHandler(fileDataSource)
-			adjunct.fileName = changeEncode(fileDataSource.name)
-			multipart.addBodyPart(adjunct)
-		}
-		msg.setContent(multipart)
-		//邮件主题
-		msg.subject = message.subject
-		//邮件发送者
-		msg.setFrom(InternetAddress(message.from))
-		//发送邮件
-		val transport = session.transport
-		transport.connect(message.host, message.name, message.password)
-		val addressArray = ArrayList<Address>()
-		message.to?.forEach {
-			addressArray.add(InternetAddress(it))
-		}
-		transport.sendMessage(msg, addressArray.toTypedArray())
-		transport.close()
-	}
-	
-	/**
-	 * 进行base64加密，防止中文乱码
-	 */
-	private fun changeEncode(str: String): String {
-		var string = str
-		try {
-			string = MimeUtility.encodeText(String(string.toByteArray(), Charset.forName("UTF-8")),
-					"UTF-8", "B") // "B"代表Base64
-		} catch (e: UnsupportedEncodingException) {
-			e.printStackTrace()
-		}
-		return string
+	companion object {
+		private val gson = Gson()
 	}
 }
 
@@ -105,12 +49,6 @@ data class GroupEmailData(
 		val to: Array<String>?, val subject: String?, val html: String?, val text: String? = null,
 		val image: Map<String, String>? = null, val attachment: Array<String>? = null
 ) {
-	
-	
-	fun toJson() = Gson().toJson(this)
-	
-	fun fromJson(json: String) = Gson().fromJson<GroupEmailData>(json)
-	
 	fun send() = sendMail(this)
 	
 	override fun equals(other: Any?): Boolean {
@@ -194,7 +132,7 @@ fun sendMail(message: GroupEmailData) {
 		val adjunct = MimeBodyPart()
 		val fileDataSource = FileDataSource(fileName)
 		adjunct.dataHandler = DataHandler(fileDataSource)
-		adjunct.fileName = changeEncode(fileDataSource.name)
+		adjunct.fileName = fileDataSource.name.base64()
 		multipart.addBodyPart(adjunct)
 	}
 	msg.setContent(multipart)
@@ -209,18 +147,4 @@ fun sendMail(message: GroupEmailData) {
 		transport.sendMessage(msg, arrayOf<Address>(InternetAddress(it)))
 	}
 	transport.close()
-}
-
-/**
- * 进行base64加密，防止中文乱码
- */
-private fun changeEncode(str: String): String {
-	var string = str
-	try {
-		string = MimeUtility.encodeText(String(string.toByteArray(), Charset.forName("UTF-8")),
-				"UTF-8", "B") // "B"代表Base64
-	} catch (e: UnsupportedEncodingException) {
-		e.printStackTrace()
-	}
-	return string
 }
