@@ -7,6 +7,8 @@ data class GroupEmailData(
 		val to: Array<String>?, val subject: String?, val html: String?, val text: String? = null,
 		val image: Map<String, String>? = null, val attachment: Array<String>? = null
 ) {
+	fun send() = sendMail(this)
+	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false

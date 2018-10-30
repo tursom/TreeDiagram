@@ -66,11 +66,6 @@ class SingleEmail : BaseMod() {
 	}
 }
 
-/**
- * 发送邮件
- */
-fun EmailData.send() = sendMail(this)
-
 class Image : HashMap<String, String>()
 
 fun sendMail(message: EmailData) {

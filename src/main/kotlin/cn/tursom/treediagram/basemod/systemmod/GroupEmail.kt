@@ -46,8 +46,6 @@ class GroupEmail : BaseMod() {
 	}
 }
 
-fun GroupEmailData.send() = sendMail(this)
-
 fun sendMail(message: GroupEmailData) {
 	val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试

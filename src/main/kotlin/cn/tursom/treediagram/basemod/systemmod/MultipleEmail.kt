@@ -32,8 +32,6 @@ class MultipleEmail : BaseMod() {
 	}
 }
 
-fun MultipleEmailData.send() = sendMail(this)
-
 fun sendMail(message: MultipleEmailData) {
 	val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试

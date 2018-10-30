@@ -21,6 +21,11 @@ data class EmailData(val host: String?, val port: Int?, val name: String?, val p
                      val to: String?, val subject: String?, val html: String?, val text: String? = null,
                      val image: Map<String, String>? = null, val attachment: Array<String>? = null) {
 	/**
+	 * 发送邮件
+	 */
+	fun send() = sendMail(this)
+	
+	/**
 	 * 自动生成的比较函数
 	 */
 	override fun equals(other: Any?): Boolean {

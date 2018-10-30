@@ -4,6 +4,7 @@ import java.util.*
 
 data class MultipleEmailData(val host: String?, val port: Int?, val name: String?, val password: String?, val from: String?,
                              val to: Array<MailStructure>?) {
+	fun send() = sendMail(this)
 	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
