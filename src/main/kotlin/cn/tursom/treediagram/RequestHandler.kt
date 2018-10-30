@@ -1,5 +1,6 @@
 package cn.tursom.treediagram
 
+import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.modloader.ModLoader
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
@@ -28,13 +29,16 @@ fun handle(request: HttpServletRequest?): String {
 		//首先会去系统模组表中查找
 		val mod = ModLoader.systemModMap[modName]
 		//没有找到的话就去用户模组表中查找
-				?: ModLoader.userModMapMap[tokenParse.usr!!]!![modName]
+				?: ModLoader.userModMapMap[tokenParse.usr ?: return "{\"state\":false,\"result\":\"user is null\"}"]
+						?.get(modName)
 				//还没有找到的话就返回错误信息
 				?: return "{\"state\":false,\"result\":\"mod could not found\"}"
 		//获取调用结果
-		val result = mod.handle(tokenParse, request.parameterMap)
+		val result = mod.handle(tokenParse, request)
 		//返回调用结果
 		return Gson().toJson(ReturnData(true, result))
+	} catch (e: BaseMod.ModException) {
+		return "{\"state\":false,\"result\":\"${e.message}\"}"
 	} catch (e: Exception) {
 		//如果运行中出现任何异常
 		//返回异常信息

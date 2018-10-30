@@ -3,6 +3,7 @@ package cn.tursom.treediagram.basemod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.Serializable
 import java.lang.Exception
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 模组基类
@@ -20,16 +21,22 @@ abstract class BaseMod {
 		 */
 		get() = this::class.java.name
 	
+	protected val modPath by lazy {
+		"${BaseMod::class.java.getResource("/").path!!}${this::class.java.name}/"
+	}
+	
 	/**
 	 * 处理模组调用请求
 	 * @param token 解析过后的用户token
 	 * @param request 用户通过get或者post提交的数据
 	 */
-	abstract fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable?
+	abstract fun handle(token: TokenData, request: HttpServletRequest): Serializable?
 	
 	/**
 	 * 模组运行过程中出现的异常
 	 */
 	class ModException(message: String?) : Exception(message)
+	
+	operator fun HttpServletRequest.get(key: String) = this.getParameter(key)
 }
 

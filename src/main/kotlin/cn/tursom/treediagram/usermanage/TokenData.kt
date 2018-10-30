@@ -35,7 +35,7 @@ data class TokenData(
 		 * @param username 用户名
 		 * @return 一整个token
 		 */
-		internal fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
+		fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
 			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username, exp = exp)).base64()}"
 			return "$body.${"$body.$secretKey".md5()}"
 		}

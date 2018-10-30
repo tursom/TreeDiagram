@@ -18,14 +18,14 @@ import java.util.logging.Logger
  * @param config 配置管理器
  * @param loadInstantly 是否立即加载，默认为真
  */
-class ModLoader(config: ConfigManager, private val user: String? = null, loadInstantly: Boolean = true) {
+class ModLoader(config: ConfigManager, private val user: String? = null, rootPath: String? = null, loadInstantly: Boolean = true) {
 	//配置数据
 	private val configData: ClassData = config.getData()!!
 	//要加载的类名
 	private val className: Array<String> = configData.classname!!
 	//类加载器
 	private val myClassLoader: ClassLoader? = try {
-		val file = File(configData.path!!)
+		val file = if (rootPath == null) File(configData.path!!) else File(rootPath + configData.path!!)
 		//如果文件不存在，抛出一个文件不存在异常
 		if (!file.exists()) throw FileNotFoundException()
 		val url = file.toURI().toURL()
@@ -48,7 +48,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 	 * 辅助构造函数
 	 * config是一个ClassData类的json格式对象
 	 */
-	constructor(config: String, user: String? = null, loadInstantly: Boolean = true) : this(ConfigManager(config), user, loadInstantly)
+	constructor(config: String, user: String? = null, rootPath: String? = null, loadInstantly: Boolean = true) : this(ConfigManager(config), user, rootPath, loadInstantly)
 	
 	/**
 	 * 手动加载模组
@@ -82,20 +82,17 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 			val modMap = Hashtable<String, BaseMod>()
 			//系统模组列表
 			val systemModList = arrayOf(
-					"cn.tursom.treediagram.basemod.systemmod.Echo",
-					"cn.tursom.treediagram.basemod.systemmod.SingleEmail",
-					"cn.tursom.treediagram.basemod.systemmod.GroupEmail",
-					"cn.tursom.treediagram.basemod.systemmod.MultipleEmail",
-					"cn.tursom.treediagram.basemod.systemmod.ModLoader",
-					"cn.tursom.treediagram.basemod.systemmod.Upload",
-					"cn.tursom.treediagram.basemod.systemmod.GetUploadFiles")
+					cn.tursom.treediagram.basemod.systemmod.Echo(),
+					cn.tursom.treediagram.basemod.systemmod.SingleEmail(),
+					cn.tursom.treediagram.basemod.systemmod.GroupEmail(),
+					cn.tursom.treediagram.basemod.systemmod.MultipleEmail(),
+					cn.tursom.treediagram.basemod.systemmod.ModLoader(),
+					cn.tursom.treediagram.basemod.systemmod.Upload(),
+					cn.tursom.treediagram.basemod.systemmod.GetUploadFileList())
 			//加载系统模组
-			systemModList.forEach { modName ->
-				//获取模组对象
-				val modClass = Class.forName(modName)
-				val modObject = modClass.getConstructor().newInstance() as BaseMod
+			systemModList.forEach { modObject ->
 				//输出日志信息
-				logger.info("ModLoader: loading mod: ${modName::class.java.name}")
+				logger.info("ModLoader:\nloading mod: ${modObject::class.java.name}")
 				//将模组的信息加载到系统中
 				modMap[modObject.modName] = modObject
 				modMap[modObject.modName.split('.').last()] = modObject
@@ -111,7 +108,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 		 */
 		fun loadMod(mod: BaseMod) {
 			//输出日志信息
-			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
+			logger.info("ModLoader:\nloading mod: ${mod::class.java.name}")
 			//将模组的信息加载到系统中
 			systemModMap[mod.modName] = mod
 			systemModMap[mod.modName.split('.').last()] = mod
@@ -123,7 +120,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 		 */
 		fun loadMod(user: String, mod: BaseMod): String {
 			//输出日志信息
-			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
+			logger.info("ModLoader:\nloading mod: ${mod::class.java.name}\nuser: $user")
 			//将模组的信息加载到系统中
 			val userModMap = (userModMapMap[user] ?: run {
 				val modMap = Hashtable<String, BaseMod>()

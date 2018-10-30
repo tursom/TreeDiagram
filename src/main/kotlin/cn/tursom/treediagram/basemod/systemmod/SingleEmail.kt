@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 用于发送单个邮件的模组
@@ -34,21 +35,21 @@ import javax.mail.internet.MimeMultipart
  * attachment 附件（可选）
  */
 class SingleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		return try {
 			//提取邮件信息
 			val mailMessage = EmailData(
-					request["host"]?.get(0),
-					request["port"]?.get(0)?.toInt() ?: 465,
-					request["name"]?.get(0),
-					request["password"]?.get(0),
-					request["from"]?.get(0),
-					request["to"]?.get(0),
-					request["subject"]?.get(0),
-					request["html"]?.get(0),
-					request["text"]?.get(0),
-					gson.fromJson(request["image"]?.get(0), Image::class.java),
-					gson.fromJson(request["attachment"]?.get(0), Array<String>::class.java)
+					request["host"],
+					request["port"]?.toInt() ?: 465,
+					request["name"],
+					request["password"],
+					request["from"],
+					request["to"],
+					request["subject"],
+					request["html"],
+					request["text"],
+					gson.fromJson(request["image"], Image::class.java),
+					gson.fromJson(request["attachment"], Array<String>::class.java)
 			)
 			//发送邮件
 			mailMessage.send()

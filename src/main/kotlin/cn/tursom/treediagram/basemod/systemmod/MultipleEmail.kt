@@ -14,11 +14,12 @@ import javax.activation.FileDataSource
 import javax.mail.Address
 import javax.mail.Session
 import javax.mail.internet.*
+import javax.servlet.http.HttpServletRequest
 
 class MultipleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		try {
-			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"]!![0])
+			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"])
 			groupEmailData.send()
 		} catch (e: Exception) {
 			return "${e::class.java}: ${e.message}"

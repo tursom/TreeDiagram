@@ -16,22 +16,23 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
+import javax.servlet.http.HttpServletRequest
 
 class GroupEmail : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		try {
 			val groupEmailData = GroupEmailData(
-					request["host"]?.get(0),
-					request["port"]?.get(0)?.toInt(),
-					request["name"]?.get(0),
-					request["password"]?.get(0),
-					request["from"]?.get(0),
-					gson.fromJson(request["to"]?.get(0), Array<String>::class.java),
-					request["subject"]?.get(0),
-					request["html"]?.get(0),
-					request["text"]?.get(0),
-					gson.fromJson(request["image"]?.get(0), Image::class.java),
-					gson.fromJson(request["attachment"]?.get(0), Array<String>::class.java)
+					request["host"],
+					request["port"]?.toInt(),
+					request["name"],
+					request["password"],
+					request["from"],
+					gson.fromJson(request["to"], Array<String>::class.java),
+					request["subject"],
+					request["html"],
+					request["text"],
+					gson.fromJson(request["image"], Image::class.java),
+					gson.fromJson(request["attachment"], Array<String>::class.java)
 			)
 			groupEmailData.send()
 		} catch (e: Exception) {

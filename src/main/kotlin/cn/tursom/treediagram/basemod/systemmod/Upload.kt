@@ -5,6 +5,8 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
 import java.io.Serializable
+import javax.servlet.http.HttpServletRequest
+
 
 /**
  * 文件上传模组
@@ -15,10 +17,9 @@ import java.io.Serializable
  * 返回的是上传到服务器的目录
  */
 class Upload : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
-		val uploadPath = "$uploadRootPath${token.usr}/${(
-				request["filename"] ?: (throw ModException("cant get file name"))
-				)[0]}"
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+		val fileName = request["filename"] ?: throw ModException("cant get file name")
+		val uploadPath = "${getUploadPath(token.usr!!)}$fileName"
 		val uploadFile = File(uploadPath)
 		if (!uploadFile.parentFile.exists()) {
 			uploadFile.parentFile.mkdirs()
@@ -28,14 +29,15 @@ class Upload : BaseMod() {
 		} else {
 			uploadFile.createNewFile()
 		}
-		val file = request["file"]?.get(0)?.toByteArray()
-				?: request["file64"]?.get(0)?.toByteArray()?.base64decode()
+		val file = request["file"]?.toByteArray()
+				?: request["file64"]?.toByteArray()?.base64decode()
 				?: throw ModException("cant get file")
 		uploadFile.writeBytes(file)
-		return uploadPath
+		return fileName
 	}
 	
 	companion object {
 		val uploadRootPath = "${Upload::class.java.getResource("/").path!!}upload/"
+		fun getUploadPath(user: String) = "$uploadRootPath$user/"
 	}
 }
