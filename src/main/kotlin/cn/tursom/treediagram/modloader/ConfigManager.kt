@@ -15,7 +15,9 @@ class ConfigManager(private val bufferedReader: BufferedReader? = null, private 
 	constructor(config: String) : this(config.byteInputStream().bufferedReader())
 	
 	val config by lazy {
-		bufferedReader?.readText() ?: "{}"
+		val text = bufferedReader?.readText() ?: "{}"
+		println(text)
+		text
 	}
 	
 	/**

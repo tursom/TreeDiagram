@@ -20,11 +20,13 @@ import javax.servlet.http.HttpServletRequest
  */
 class ModLoader : BaseMod() {
 	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+		println(request["modData"])
 		val modLoader = if (request["system"] != "true") {
-			ModLoader(request["mod"] ?: throw ModException("no mod get"), token.usr, Upload.getUploadPath(token.usr!!), false)
+			ModLoader(request["modData"]
+					?: throw ModException("no mod get"), token.usr, Upload.getUploadPath(token.usr!!), false)
 		} else {
 			if (findUser(token.usr!!)?.level != "admin") throw ModException("user not admin")
-			ModLoader(request["mod"] ?: throw ModException("no mod get"), null, Upload.getUploadPath(token.usr), false)
+			ModLoader(request["modData"] ?: throw ModException("no mod get"), null, Upload.getUploadPath(token.usr), false)
 		}
 		if (!modLoader.load()) throw ModException("mod load error")
 		return null
