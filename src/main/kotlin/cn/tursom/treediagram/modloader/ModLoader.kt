@@ -86,7 +86,9 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 					"cn.tursom.treediagram.basemod.systemmod.SingleEmail",
 					"cn.tursom.treediagram.basemod.systemmod.GroupEmail",
 					"cn.tursom.treediagram.basemod.systemmod.MultipleEmail",
-					"cn.tursom.treediagram.basemod.systemmod.ModLoader")
+					"cn.tursom.treediagram.basemod.systemmod.ModLoader",
+					"cn.tursom.treediagram.basemod.systemmod.Upload",
+					"cn.tursom.treediagram.basemod.systemmod.GetUploadFiles")
 			//加载系统模组
 			systemModList.forEach { modName ->
 				//获取模组对象

@@ -1,6 +1,5 @@
 package cn.tursom.treediagram.usermanage
 
-import cn.tursom.database.SQLAdapter
 import cn.tursom.tools.*
 import com.google.gson.Gson
 
@@ -36,8 +35,8 @@ data class TokenData(
 		 * @param username 用户名
 		 * @return 一整个token
 		 */
-		fun getToken(username: String): String {
-			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username)).base64()}"
+		internal fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
+			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username, exp = exp)).base64()}"
 			return "$body.${"$body.$secretKey".md5()}"
 		}
 		

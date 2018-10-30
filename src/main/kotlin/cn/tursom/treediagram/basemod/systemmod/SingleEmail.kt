@@ -7,7 +7,6 @@ import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
 import java.net.URL
 import java.util.*
-import java.util.logging.Logger
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
 import javax.mail.Address

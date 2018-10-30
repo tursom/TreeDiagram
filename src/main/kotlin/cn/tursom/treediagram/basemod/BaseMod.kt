@@ -10,6 +10,7 @@ abstract class BaseMod {
 	/**
 	 * 模组名
 	 * 是调用模组时的依据
+	 * 默认为本模组的类的全名
 	 */
 	open val modName: String
 		/**

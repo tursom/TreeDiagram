@@ -30,6 +30,10 @@ import java.util.*
  *  给定Spinner设置Adapter
  */
 
+/**
+ * CPU数量
+ * 如果有超线程技术，则是超线程后的CPU数量
+ */
 val cpuNumber = Runtime.getRuntime().availableProcessors()
 
 fun ByteArray.md5(): ByteArray? {
@@ -105,7 +109,6 @@ fun ByteArray.digest(type: String) = try {
 }
 
 fun randomInt(min: Int, max: Int) = Random().nextInt(max) % (max - min + 1) + min
-
 
 fun getTAG(cls: Class<*>): String {
 	return cls.name.split(".").last().dropLast(10)
