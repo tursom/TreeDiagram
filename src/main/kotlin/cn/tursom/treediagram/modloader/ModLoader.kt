@@ -110,8 +110,10 @@ class ModLoader(config: ConfigManager, private val user: String? = null, rootPat
 			//输出日志信息
 			logger.info("ModLoader:\nloading mod: ${mod::class.java.name}")
 			//将模组的信息加载到系统中
-			systemModMap[mod.modName] = mod
-			systemModMap[mod.modName.split('.').last()] = mod
+			if (!systemModMap.contains(mod.modName)) {
+				systemModMap[mod.modName] = mod
+				systemModMap[mod.modName.split('.').last()] = mod
+			}
 		}
 		
 		/**
