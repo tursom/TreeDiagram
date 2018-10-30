@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 class MultipleEmail : BaseMod() {
 	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		try {
-			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"])
+			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"]!!)
 			groupEmailData.send()
 		} catch (e: Exception) {
 			return "${e::class.java}: ${e.message}"

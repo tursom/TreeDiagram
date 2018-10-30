@@ -1,6 +1,7 @@
 package cn.tursom.treediagram.basemod
 
 import cn.tursom.treediagram.usermanage.TokenData
+import java.io.File
 import java.io.Serializable
 import java.lang.Exception
 import javax.servlet.http.HttpServletRequest
@@ -21,8 +22,14 @@ abstract class BaseMod {
 		 */
 		get() = this::class.java.name
 	
-	protected val modPath by lazy {
-		"${BaseMod::class.java.getResource("/").path!!}${this::class.java.name}/"
+	/**
+	 * 模组私有目录
+	 */
+	val modPath by lazy {
+		val path = "${BaseMod::class.java.getResource("/").path!!}${this::class.java.name}/"
+		val dir = File(path)
+		if (!dir.exists()) dir.mkdirs()
+		path
 	}
 	
 	/**
@@ -37,6 +44,6 @@ abstract class BaseMod {
 	 */
 	class ModException(message: String?) : Exception(message)
 	
-	operator fun HttpServletRequest.get(key: String) = this.getParameter(key)
+	operator fun HttpServletRequest.get(key: String): String? = this.getParameter(key)
 }
 
