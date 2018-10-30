@@ -8,26 +8,7 @@ import java.util.*
 /**
  * Created by Tursom Ulefits on 2017/8/8.
  * Author: Tursom K. Ulefits
- * email: tursom@foxmail.com
- *
- * 功能介绍：
- * hideTitle(activity)
- *  隐藏默认的标题栏
- * startActivity(context, cls)
- *  创建新的activity
- *  例： Tools.startActivity(activity, LoginActivity::class.java)
- * setImageBitmap(imageView,bitmap,radiust,scaleRatio,context)
- *  将高斯模糊后的图片设置给imageView
- * blurBitmap(bitmap,radius, context): Bitmap
- *  将图片高斯模糊
- * cn.tursom.tools.md5(content: String)： String
- *  md5加密
- * cn.tursom.tools.randomInt(min, max): Int
- *  获取从min到max之间的随机整数
- * makeToast(activity, message: String)
- *  创建Toast信息
- * setSpinnerAdapter(spinner: Spinner?, collegeItems: Array<String>?, context: Context)
- *  给定Spinner设置Adapter
+ * email: tursom@foxmail.com c
  */
 
 /**

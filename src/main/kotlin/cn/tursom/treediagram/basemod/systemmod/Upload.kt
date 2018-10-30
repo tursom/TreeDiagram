@@ -4,6 +4,7 @@ import cn.tursom.tools.base64decode
 import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
+import java.io.Serializable
 
 /**
  * 文件上传模组
@@ -14,7 +15,7 @@ import java.io.File
  * 返回的是上传到服务器的目录
  */
 class Upload : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Any? {
+	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
 		val uploadPath = "$uploadRootPath${token.usr}/${(
 				request["filename"] ?: (throw ModException("cant get file name"))
 				)[0]}"

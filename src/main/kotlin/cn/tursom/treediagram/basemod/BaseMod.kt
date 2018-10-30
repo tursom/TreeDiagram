@@ -1,6 +1,7 @@
 package cn.tursom.treediagram.basemod
 
 import cn.tursom.treediagram.usermanage.TokenData
+import java.io.Serializable
 import java.lang.Exception
 
 /**
@@ -24,7 +25,7 @@ abstract class BaseMod {
 	 * @param token 解析过后的用户token
 	 * @param request 用户通过get或者post提交的数据
 	 */
-	abstract fun handle(token: TokenData, request: Map<String, Array<String>>): Any?
+	abstract fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable?
 	
 	/**
 	 * 模组运行过程中出现的异常

@@ -121,7 +121,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 		 * 加载模组
 		 * 将模组的注册信息加载进系统中
 		 */
-		fun loadMod(user: String, mod: BaseMod) {
+		fun loadMod(user: String, mod: BaseMod): String {
 			//输出日志信息
 			logger.info("ModLoader: loading mod: ${mod::class.java.name}")
 			//将模组的信息加载到系统中
@@ -132,6 +132,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, loadIns
 			})
 			userModMap[mod.modName] = mod
 			userModMap[mod.modName.split('.').last()] = mod
+			return mod.modName
 		}
 	}
 }

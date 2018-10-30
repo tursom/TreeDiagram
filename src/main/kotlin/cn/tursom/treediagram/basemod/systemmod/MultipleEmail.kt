@@ -6,9 +6,8 @@ import cn.tursom.tools.fromJson
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
-import java.io.UnsupportedEncodingException
+import java.io.Serializable
 import java.net.URL
-import java.nio.charset.Charset
 import java.util.*
 import javax.activation.DataHandler
 import javax.activation.FileDataSource
@@ -17,7 +16,7 @@ import javax.mail.Session
 import javax.mail.internet.*
 
 class MultipleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Any? {
+	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
 		try {
 			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"]!![0])
 			groupEmailData.send()

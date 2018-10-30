@@ -5,6 +5,7 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import com.sun.mail.util.MailSSLSocketFactory
+import java.io.Serializable
 import java.net.URL
 import java.util.*
 import javax.activation.DataHandler
@@ -33,7 +34,7 @@ import javax.mail.internet.MimeMultipart
  * attachment 附件（可选）
  */
 class SingleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: Map<String, Array<String>>): Any? {
+	override fun handle(token: TokenData, request: Map<String, Array<String>>): Serializable? {
 		return try {
 			//提取邮件信息
 			val mailMessage = EmailData(
