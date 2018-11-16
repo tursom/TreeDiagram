@@ -5,7 +5,7 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
 import java.io.Serializable
-import javax.servlet.http.HttpServletRequest
+import javax.servlet.ServletRequest
 
 
 /**
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
  * 返回的是上传到服务器的目录
  */
 class Upload : BaseMod() {
-	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
 		val fileName = request["filename"] ?: throw ModException("cant get file name")
 		val uploadPath = "${getUploadPath(token.usr!!)}$fileName"
 		val uploadFile = File(uploadPath)

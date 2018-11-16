@@ -21,8 +21,19 @@ private fun addUser(username: String, password: String, level: String) {
 }
 
 /**
+ * 是否是一个刚建立的，没有任何数据的服务器
+ */
+private val newServer by lazy {
+	//首先尝试从数据库中取一条数据
+	val adapter = SQLAdapter(UserData::class.java)
+	SystemDatabase.database.select(adapter, userTable, maxCount = 1)
+	//判断是否真的有数据
+	adapter.size == 0
+}
+
+/**
  * 用于处理注册逻辑的函数
- * 第一个注册的用户不许要验证，并且固定是admin权限
+ * 第一个注册的用户不需要验证，并且固定是admin权限
  * 后续注册的用户需要有admin权限的token
  * 需要username，password以及level（可选，默认user）来注册一个新用户
  * @param request 请求的request对象
@@ -30,10 +41,7 @@ private fun addUser(username: String, password: String, level: String) {
  */
 fun register(request: HttpServletRequest?): String {
 	//如果数据库内无任何用户，则可以直接创建一个admin权限的用户
-	//首先尝试从数据库中取一条数据
-	val adapter = SQLAdapter(UserData::class.java)
-	SystemDatabase.database.select(adapter, userTable, maxCount = 1)
-	return if (adapter.size == 0) {
+	return if (newServer) {
 		//如果没有数据，说明现在没有任何用户注册
 		//可以直接创建一个admin权限的用户
 		//获取新用户用户名

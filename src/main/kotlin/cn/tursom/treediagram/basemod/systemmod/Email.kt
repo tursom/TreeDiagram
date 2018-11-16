@@ -16,10 +16,12 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
-import javax.servlet.http.HttpServletRequest
+import javax.servlet.ServletRequest
 
 /**
  * 用于发送单个邮件的模组
+ * 群发邮件请用MultipleEmail和GroupEmail
+ *
  * 需要提供的参数为
  *
  * host smtp服务器地址
@@ -34,8 +36,8 @@ import javax.servlet.http.HttpServletRequest
  * image 图片（可选）
  * attachment 附件（可选）
  */
-class SingleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+class Email : BaseMod() {
+	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
 		return try {
 			//提取邮件信息
 			val mailMessage = EmailData(

@@ -89,7 +89,7 @@ fun ByteArray.digest(type: String) = try {
 	null
 }
 
-fun randomInt(min: Int, max: Int) = Random().nextInt(max) % (max - min + 1) + min
+fun randomInt(min: Int, max: Int) = Random().nextInt(max - min + 1) + min
 
 fun getTAG(cls: Class<*>): String {
 	return cls.name.split(".").last().dropLast(10)

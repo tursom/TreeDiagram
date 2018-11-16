@@ -30,6 +30,7 @@ fun handle(request: HttpServletRequest?): String {
 		val mod = ModLoader.systemModMap[modName]
 		//没有找到的话就去用户模组表中查找
 				?: ModLoader.userModMapMap[tokenParse.usr ?: return "{\"state\":false,\"result\":\"user is null\"}"]
+						//如果找到了就获取对象
 						?.get(modName)
 				//还没有找到的话就返回错误信息
 				?: return "{\"state\":false,\"result\":\"mod could not found\"}"

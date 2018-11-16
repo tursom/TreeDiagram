@@ -37,9 +37,11 @@ interface SQLHelper {
 	 * @param where 指定从一个表或多个表中获取数据的条件,Pair左边为字段名，右边为限定的值
 	 * @param maxCount 最大查询数量
 	 */
-	fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String> = arrayOf("*"), where: Map<String, String>?, maxCount: Int? = null)
+	fun <T : Any> select(adapter: SQLAdapter<T>,
+	                     table: String,
+	                     name: Array<String> = arrayOf("*"),
+	                     where: Map<String, String>?,
+	                     maxCount: Int? = null)
 	
 	/**
 	 * 查询
@@ -49,26 +51,37 @@ interface SQLHelper {
 	 * @param where 指定从一个表或多个表中获取数据的条件,Pair左边为字段名，右边为限定的值
 	 * @param maxCount 最大查询数量
 	 */
-	fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String,
-		where: Pair<String, String>, maxCount: Int? = null, name: Array<String> = arrayOf("*"))
+	fun <T : Any> select(adapter: SQLAdapter<T>,
+	                     table: String,
+	                     where: Pair<String, String>,
+	                     maxCount: Int? = null,
+	                     name: Array<String> = arrayOf("*"))
 	
-	fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String, name: String = "*", where: String? = null, maxCount: Int? = null
-	)
+	fun <T : Any> select(adapter: SQLAdapter<T>,
+	                     table: String,
+	                     name: String = "*",
+	                     where: String? = null,
+	                     maxCount: Int? = null)
 	
-	fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String> = arrayOf("*"), where: Map<String, String>? = null, index: String, maxCount: Int? = null) {
-	}
+	fun <T : Any> reverseSelect(adapter: SQLAdapter<T>,
+	                            table: String,
+	                            name: Array<String> = arrayOf("*"),
+	                            where: Map<String, String>? = null,
+	                            index: String, maxCount: Int? = null)
 	
-	fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String> = arrayOf("*"), where: Pair<String, String>, index: String, maxCount: Int? = null)
+	fun <T : Any> reverseSelect(adapter: SQLAdapter<T>,
+	                            table: String,
+	                            name: Array<String> = arrayOf("*"),
+	                            where: Pair<String, String>,
+	                            index: String,
+	                            maxCount: Int? = null)
 	
-	fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String, name: String = "*", where: String? = null, index: String, maxCount: Int? = null
-	)
+	fun <T : Any> reverseSelect(adapter: SQLAdapter<T>,
+	                            table: String,
+	                            name: String = "*",
+	                            where: String? = null,
+	                            index: String,
+	                            maxCount: Int? = null)
 	
 	/**
 	 * 插入
@@ -82,9 +95,9 @@ interface SQLHelper {
 	fun insert(table: String, column: String, values: String)
 	
 	fun update(
-		table: String,
-		set: Map<String, String> = mapOf(),
-		where: Map<String, String> = mapOf())
+			table: String,
+			set: Map<String, String> = mapOf(),
+			where: Map<String, String> = mapOf())
 	
 	fun <T : Any> update(table: String, value: T, where: Map<String, String>)
 	

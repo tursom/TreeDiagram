@@ -83,7 +83,7 @@ class ModLoader(config: ConfigManager, private val user: String? = null, rootPat
 			//系统模组列表
 			val systemModList = arrayOf(
 					cn.tursom.treediagram.basemod.systemmod.Echo(),
-					cn.tursom.treediagram.basemod.systemmod.SingleEmail(),
+					cn.tursom.treediagram.basemod.systemmod.Email(),
 					cn.tursom.treediagram.basemod.systemmod.GroupEmail(),
 					cn.tursom.treediagram.basemod.systemmod.MultipleEmail(),
 					cn.tursom.treediagram.basemod.systemmod.ModLoader(),

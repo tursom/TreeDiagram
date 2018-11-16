@@ -5,7 +5,7 @@ import cn.tursom.treediagram.modloader.ModLoader
 import cn.tursom.treediagram.usermanage.TokenData
 import cn.tursom.treediagram.usermanage.findUser
 import java.io.Serializable
-import javax.servlet.http.HttpServletRequest
+import javax.servlet.ServletRequest
 
 /**
  * 模组加载模组
@@ -19,14 +19,21 @@ import javax.servlet.http.HttpServletRequest
  * 模组加载的根目录为使用Upload上传的根目录
  */
 class ModLoader : BaseMod() {
-	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
-		println(request["modData"])
+	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
+		val modData = request["modData"]
+		println(modData)
 		val modLoader = if (request["system"] != "true") {
-			ModLoader(request["modData"]
-					?: throw ModException("no mod get"), token.usr, Upload.getUploadPath(token.usr!!), false)
+			ModLoader(
+					modData ?: throw ModException("no mod get"),
+					token.usr,
+					Upload.getUploadPath(token.usr!!),
+					false)
 		} else {
 			if (findUser(token.usr!!)?.level != "admin") throw ModException("user not admin")
-			ModLoader(request["modData"] ?: throw ModException("no mod get"), null, Upload.getUploadPath(token.usr), false)
+			ModLoader(
+					request["modData"] ?: throw ModException("no mod get"),
+					null, Upload.getUploadPath(token.usr),
+					false)
 		}
 		if (!modLoader.load()) throw ModException("mod load error")
 		return null
