@@ -43,6 +43,6 @@ fun handle(request: HttpServletRequest?): String {
 	} catch (e: Exception) {
 		//如果运行中出现任何异常
 		//返回异常信息
-		return "{\"state\":false,\"result\":\"${e::class.java}: ${e.message}\"}"
+		return "{\"state\":false,\"result\":\"${e::class.java}${if (e.message != null) ": ${e.message}" else ""}\"}"
 	}
 }
