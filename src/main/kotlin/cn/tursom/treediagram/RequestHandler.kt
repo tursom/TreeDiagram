@@ -1,7 +1,8 @@
 package cn.tursom.treediagram
 
 import cn.tursom.treediagram.basemod.BaseMod
-import cn.tursom.treediagram.modloader.ModLoader
+import cn.tursom.treediagram.modloader.ModManager.getSystemMod
+import cn.tursom.treediagram.modloader.ModManager.getUserMod
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import javax.servlet.http.HttpServletRequest
@@ -27,12 +28,10 @@ fun handle(request: HttpServletRequest?): String {
 		val modName = request.getParameter("mod") ?: "Echo"
 		//获取需要调用的模组
 		//首先会去系统模组表中查找
-		val mod = ModLoader.systemModMap[modName]
+		val mod = getSystemMod(modName)
 		//没有找到的话就去用户模组表中查找
-				?: ModLoader.userModMapMap[tokenParse.usr ?: return "{\"state\":false,\"result\":\"user is null\"}"]
-						//如果找到了就获取对象
-						?.get(modName)
-				//还没有找到的话就返回错误信息
+				?: getUserMod(tokenParse.usr ?: return "{\"state\":false,\"result\":\"user is null\"}", modName)
+				//如果没有找到的话就返回错误信息
 				?: return "{\"state\":false,\"result\":\"mod could not found\"}"
 		//获取调用结果
 		val result = mod.handle(tokenParse, request)

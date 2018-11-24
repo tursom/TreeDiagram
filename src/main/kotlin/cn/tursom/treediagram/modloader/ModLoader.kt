@@ -1,12 +1,11 @@
 package cn.tursom.treediagram.modloader
 
 import cn.tursom.treediagram.basemod.BaseMod
+import cn.tursom.treediagram.modloader.ModManager.loadMod
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.net.URLClassLoader
-import java.util.*
-import java.util.logging.Logger
 
 /**
  * 用于加载模组
@@ -74,65 +73,6 @@ class ModLoader(config: ConfigManager, private val user: String? = null, rootPat
 			}
 		}
 		return allSuccessful
-	}
-	
-	companion object {
-		private val logger = Logger.getLogger("ModLoader")!!
-		val systemModMap by lazy {
-			val modMap = Hashtable<String, BaseMod>()
-			//系统模组列表
-			val systemModList = arrayOf(
-					cn.tursom.treediagram.basemod.systemmod.Echo(),
-					cn.tursom.treediagram.basemod.systemmod.Email(),
-					cn.tursom.treediagram.basemod.systemmod.GroupEmail(),
-					cn.tursom.treediagram.basemod.systemmod.MultipleEmail(),
-					cn.tursom.treediagram.basemod.systemmod.ModLoader(),
-					cn.tursom.treediagram.basemod.systemmod.Upload(),
-					cn.tursom.treediagram.basemod.systemmod.GetUploadFileList())
-			//加载系统模组
-			systemModList.forEach { modObject ->
-				//输出日志信息
-				logger.info("ModLoader:\nloading mod: ${modObject::class.java.name}")
-				//将模组的信息加载到系统中
-				modMap[modObject.modName] = modObject
-				modMap[modObject.modName.split('.').last()] = modObject
-			}
-			modMap
-		}
-		
-		val userModMapMap: Hashtable<String, Hashtable<String, BaseMod>> = Hashtable()
-		
-		/**
-		 * 加载模组
-		 * 将模组的注册信息加载进系统中
-		 */
-		fun loadMod(mod: BaseMod) {
-			//输出日志信息
-			logger.info("ModLoader:\nloading mod: ${mod::class.java.name}")
-			//将模组的信息加载到系统中
-			if (!systemModMap.contains(mod.modName)) {
-				systemModMap[mod.modName] = mod
-				systemModMap[mod.modName.split('.').last()] = mod
-			}
-		}
-		
-		/**
-		 * 加载模组
-		 * 将模组的注册信息加载进系统中
-		 */
-		fun loadMod(user: String, mod: BaseMod): String {
-			//输出日志信息
-			logger.info("ModLoader:\nloading mod: ${mod::class.java.name}\nuser: $user")
-			//将模组的信息加载到系统中
-			val userModMap = (userModMapMap[user] ?: run {
-				val modMap = Hashtable<String, BaseMod>()
-				userModMapMap[user] = modMap
-				modMap
-			})
-			userModMap[mod.modName] = mod
-			userModMap[mod.modName.split('.').last()] = mod
-			return mod.modName
-		}
 	}
 }
 

@@ -10,7 +10,7 @@ internal val userTable = run {
 	"users"
 }
 
-fun findUser(username: String): UserData? {
+internal fun findUser(username: String): UserData? {
 	val adapter = SQLAdapter(UserData::class.java)
 	SystemDatabase.database.select(adapter, userTable, Pair("username", username), 1)
 	return if (adapter.count() == 0) null

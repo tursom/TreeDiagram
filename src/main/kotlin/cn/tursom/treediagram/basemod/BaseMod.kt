@@ -36,12 +36,22 @@ abstract class BaseMod {
 	}
 	
 	/**
+	 * 当模组被初始化时被调用
+	 */
+	open fun init() {}
+	
+	/**
 	 * 处理模组调用请求
 	 * @param token 解析过后的用户token
 	 * @param request 用户通过get或者post提交的数据
 	 * @return 一个用于表示json数据的对象或者null
 	 */
 	abstract fun handle(token: TokenData, request: ServletRequest): Serializable?
+	
+	/**
+	 * 当模组生命周期结束时被调用
+	 */
+	open fun destroy() {}
 	
 	/**
 	 * 模组运行过程中出现的异常

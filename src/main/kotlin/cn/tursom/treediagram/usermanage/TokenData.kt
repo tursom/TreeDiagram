@@ -35,7 +35,7 @@ data class TokenData(
 		 * @param username 用户名
 		 * @return 一整个token
 		 */
-		fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
+		internal fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
 			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username, exp = exp)).base64()}"
 			return "$body.${"$body.$secretKey".md5()}"
 		}
@@ -46,7 +46,7 @@ data class TokenData(
 		 * @param token 需要验证的整个token
 		 * @return 验证结果，如果失败返回null，成功则返回一个TokenData对象
 		 */
-		fun parseToken(token: String): TokenData? {
+		internal fun parseToken(token: String): TokenData? {
 			val data = token.split('.')
 			return when {
 				data.size != 3 -> null
