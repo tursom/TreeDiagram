@@ -1,7 +1,7 @@
-package cn.tursom.treediagram.basemod.systemmod
+package cn.tursom.treediagram.systemmod
 
 import cn.tursom.tools.base64decode
-import cn.tursom.treediagram.basemod.BaseMod
+import cn.tursom.treediagram.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
 import java.io.Serializable

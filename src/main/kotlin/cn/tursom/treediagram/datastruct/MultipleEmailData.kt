@@ -1,4 +1,4 @@
-package cn.tursom.treediagram.basemod.systemmod
+package cn.tursom.treediagram.datastruct
 
 import cn.tursom.tools.base64
 import com.sun.mail.util.MailSSLSocketFactory
@@ -13,12 +13,12 @@ import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
-data class MultipleEmailData(val host: String?,
-                             val port: Int?,
-                             val name: String?,
-                             val password: String?,
-                             val from: String?,
-                             val to: Array<MailStructure>?) {
+data class MultipleEmailData(var host: String?,
+                             var port: Int?,
+                             var name: String?,
+                             var password: String?,
+                             var from: String?,
+                             var to: Array<MailStructure>?) {
 	fun send() {
 		val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试

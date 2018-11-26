@@ -1,4 +1,4 @@
-package cn.tursom.treediagram.basemod
+package cn.tursom.treediagram
 
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
