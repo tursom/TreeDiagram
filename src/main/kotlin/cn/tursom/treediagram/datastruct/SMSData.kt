@@ -1,4 +1,4 @@
-package cn.tursom.treediagram.basemod.systemmod
+package cn.tursom.treediagram.datastruct
 
 /**
  * 为短信推送设计的数据类

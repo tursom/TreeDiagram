@@ -1,6 +1,5 @@
 package cn.tursom.treediagram
 
-import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.modloader.ModManager.getSystemMod
 import cn.tursom.treediagram.modloader.ModManager.getUserMod
 import cn.tursom.treediagram.usermanage.TokenData

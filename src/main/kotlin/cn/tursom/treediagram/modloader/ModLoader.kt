@@ -1,6 +1,6 @@
 package cn.tursom.treediagram.modloader
 
-import cn.tursom.treediagram.basemod.BaseMod
+import cn.tursom.treediagram.BaseMod
 import cn.tursom.treediagram.modloader.ModManager.loadMod
 import java.io.File
 import java.io.FileNotFoundException

@@ -1,4 +1,4 @@
-package cn.tursom.treediagram.basemod.systemmod
+package cn.tursom.treediagram.datastruct
 
 import cn.tursom.tools.base64
 import com.sun.mail.util.MailSSLSocketFactory
