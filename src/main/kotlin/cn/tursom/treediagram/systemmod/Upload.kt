@@ -1,6 +1,6 @@
-package cn.tursom.treediagram.basemod.systemmod
+package cn.tursom.treediagram.systemmod
 
-import cn.tursom.treediagram.basemod.BaseMod
+import cn.tursom.treediagram.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.apache.commons.fileupload.servlet.ServletFileUpload

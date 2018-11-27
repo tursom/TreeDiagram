@@ -1,13 +1,12 @@
 package cn.tursom.treediagram.modloader
 
-import cn.tursom.treediagram.basemod.BaseMod
+import cn.tursom.treediagram.BaseMod
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.*
 import java.util.logging.Logger
-import kotlin.collections.ArrayList
 
 object ModManager {
 	private val logger = Logger.getLogger("ModManager")!!
@@ -15,13 +14,13 @@ object ModManager {
 		val modMap = Hashtable<String, BaseMod>()
 		//系统模组列表
 		val systemModList = arrayOf(
-				cn.tursom.treediagram.basemod.systemmod.Echo(),
-				cn.tursom.treediagram.basemod.systemmod.Email(),
-				cn.tursom.treediagram.basemod.systemmod.GroupEmail(),
-				cn.tursom.treediagram.basemod.systemmod.MultipleEmail(),
-				cn.tursom.treediagram.basemod.systemmod.ModLoader(),
-				cn.tursom.treediagram.basemod.systemmod.Upload(),
-				cn.tursom.treediagram.basemod.systemmod.GetUploadFileList())
+				cn.tursom.treediagram.systemmod.Echo(),
+				cn.tursom.treediagram.systemmod.Email(),
+				cn.tursom.treediagram.systemmod.GroupEmail(),
+				cn.tursom.treediagram.systemmod.MultipleEmail(),
+				cn.tursom.treediagram.systemmod.ModLoader(),
+				cn.tursom.treediagram.systemmod.Upload(),
+				cn.tursom.treediagram.systemmod.GetUploadFileList())
 		//加载系统模组
 		systemModList.forEach { modObject ->
 			//输出日志信息
