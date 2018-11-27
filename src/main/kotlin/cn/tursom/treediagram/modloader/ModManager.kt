@@ -1,8 +1,13 @@
 package cn.tursom.treediagram.modloader
 
 import cn.tursom.treediagram.basemod.BaseMod
+import java.io.File
+import java.io.FileNotFoundException
+import java.net.URL
+import java.net.URLClassLoader
 import java.util.*
 import java.util.logging.Logger
+import kotlin.collections.ArrayList
 
 object ModManager {
 	private val logger = Logger.getLogger("ModManager")!!
@@ -68,6 +73,45 @@ object ModManager {
 		userModMap[mod.modName] = mod
 		userModMap[mod.modName.split('.').last()] = mod
 		return mod.modName
+	}
+	
+	fun loadMod(configData: ClassData, user: String? = null, rootPath: String? = null): Boolean {
+		//要加载的类名
+		val className: Array<String> = configData.classname!!
+		//类加载器
+		val myClassLoader: ClassLoader? = try {
+			val file = if (rootPath == null) {
+				File(configData.path!!)
+			} else {
+				File(rootPath + configData.path!!)
+			}
+			//如果文件不存在，抛出一个文件不存在异常
+			if (!file.exists()) throw FileNotFoundException()
+			val url = file.toURI().toURL()
+			URLClassLoader(arrayOf(url), Thread.currentThread().contextClassLoader)
+		} catch (e: Exception) {
+			//从文件加载模组失败，尝试从网络加载模组
+			URLClassLoader(arrayOf(URL(configData.url!!)), Thread.currentThread().contextClassLoader)
+		}
+		//是否所有的模组都加载成功
+		var allSuccessful = true
+		className.forEach { className1 ->
+			try {
+				//获取一个指定模组的对象
+				val modClass = myClassLoader!!.loadClass(className1)
+				val modObject = modClass.getConstructor().newInstance() as BaseMod
+				//加载模组
+				if (user == null)
+					loadMod(modObject)
+				else {
+					loadMod(user, modObject)
+				}
+			} catch (e: NoSuchMethodException) {
+				//如果失败，将标志位置否
+				allSuccessful = false
+			}
+		}
+		return allSuccessful
 	}
 	
 	/**

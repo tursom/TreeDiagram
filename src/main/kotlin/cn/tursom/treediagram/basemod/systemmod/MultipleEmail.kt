@@ -5,10 +5,10 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import java.io.Serializable
-import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 class MultipleEmail : BaseMod() {
-	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		try {
 			val groupEmailData = gson.fromJson<MultipleEmailData>(request["message"]!!)
 			groupEmailData.send()

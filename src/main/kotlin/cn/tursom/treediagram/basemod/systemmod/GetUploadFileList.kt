@@ -4,13 +4,13 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
 import java.io.Serializable
-import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 获取上传的文件的列表
  */
 class GetUploadFileList : BaseMod() {
-	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		val uploadPath = "${Upload.uploadRootPath}${token.usr}/"
 		val uploadDir = File(uploadPath)
 		val fileList = ArrayList<String>()

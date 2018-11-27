@@ -13,12 +13,12 @@ import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
-data class MultipleEmailData(val host: String?,
-                             val port: Int?,
-                             val name: String?,
-                             val password: String?,
-                             val from: String?,
-                             val to: Array<MailStructure>?) {
+data class MultipleEmailData(var host: String?,
+                             var port: Int?,
+                             var name: String?,
+                             var password: String?,
+                             var from: String?,
+                             var to: Array<MailStructure>?) {
 	fun send() {
 		val props = Properties()
 //		props["mail.debug"] = "true"  // 开启debug调试
@@ -109,8 +109,8 @@ data class MultipleEmailData(val host: String?,
 	}
 }
 
-data class MailStructure(val to: String?, val subject: String?, val html: String?, val text: String? = null,
-                         val image: Map<String, String>? = null, val attachment: Array<String>? = null) {
+data class MailStructure(var to: String?, var subject: String?, var html: String?, var text: String? = null,
+                         var image: Map<String, String>? = null, var attachment: Array<String>? = null) {
 	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

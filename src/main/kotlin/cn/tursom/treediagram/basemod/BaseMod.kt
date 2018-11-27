@@ -3,8 +3,8 @@ package cn.tursom.treediagram.basemod
 import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
 import java.io.Serializable
-import java.lang.Exception
 import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 /**
  * TreeDiagram的所有模组的基类
@@ -46,7 +46,7 @@ abstract class BaseMod {
 	 * @param request 用户通过get或者post提交的数据
 	 * @return 一个用于表示json数据的对象或者null
 	 */
-	abstract fun handle(token: TokenData, request: ServletRequest): Serializable?
+	abstract fun handle(token: TokenData, request: HttpServletRequest): Serializable?
 	
 	/**
 	 * 当模组生命周期结束时被调用

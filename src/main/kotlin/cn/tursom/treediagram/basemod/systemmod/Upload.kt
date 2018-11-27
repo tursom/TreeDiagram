@@ -1,11 +1,13 @@
 package cn.tursom.treediagram.basemod.systemmod
 
-import cn.tursom.tools.base64decode
 import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
+import org.apache.commons.fileupload.disk.DiskFileItemFactory
+import org.apache.commons.fileupload.servlet.ServletFileUpload
 import java.io.File
+import java.io.FileOutputStream
 import java.io.Serializable
-import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 
 /**
@@ -17,23 +19,36 @@ import javax.servlet.ServletRequest
  * 返回的是上传到服务器的目录
  */
 class Upload : BaseMod() {
-	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
-		val fileName = request["filename"] ?: throw ModException("cant get file name")
-		val uploadPath = "${getUploadPath(token.usr!!)}$fileName"
-		val uploadFile = File(uploadPath)
-		if (!uploadFile.parentFile.exists()) {
-			uploadFile.parentFile.mkdirs()
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+		val uploadPath = getUploadPath(token.usr!!)
+		if (!File(uploadPath).exists()) {
+			File(uploadPath).mkdirs()
 		}
-		if (uploadFile.exists()) {
-			throw ModException("file exist")
-		} else {
-			uploadFile.createNewFile()
+		
+		val body =
+				ServletFileUpload(DiskFileItemFactory()).parseParameterMap(request)
+		body.forEach { name, desc ->
+			val uploadFile = File("$uploadPath$name")
+			if (!uploadFile.parentFile.exists()) {
+				uploadFile.parentFile.mkdirs()
+			}
+			val outputStream = when (request.getHeader("type") ?: "append") {
+				"create" -> {
+					if (uploadFile.exists()) throw ModException("file exist")
+					FileOutputStream(uploadFile)
+				}
+				"append" -> {
+					FileOutputStream(uploadFile, true)
+				}
+				else -> throw ModException("unsupported upload type, " +
+						"please use \"create\" or \"append\"(default) as an upload type")
+			}
+			
+			outputStream.write(desc[0].inputStream.readAllBytes())
+			outputStream.close()
 		}
-		val file = request["file"]?.toByteArray()
-				?: request["file64"]?.toByteArray()?.base64decode()
-				?: throw ModException("cant get file")
-		uploadFile.writeBytes(file)
-		return fileName
+		
+		return body.keys.toTypedArray()
 	}
 	
 	companion object {

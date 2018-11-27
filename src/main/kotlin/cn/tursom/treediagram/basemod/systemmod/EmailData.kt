@@ -28,9 +28,9 @@ import javax.mail.internet.MimeMultipart
  * @param image 图片
  * @param attachment 附件
  */
-data class EmailData(val host: String?, val port: Int?, val name: String?, val password: String?, val from: String?,
-                     val to: String?, val subject: String?, val html: String?, val text: String? = null,
-                     val image: Map<String, String>? = null, val attachment: Array<String>? = null) {
+data class EmailData(var host: String?, var port: Int?, var name: String?, var password: String?, var from: String?,
+                     var to: String?, var subject: String?, var html: String?, var text: String? = null,
+                     var image: Map<String, String>? = null, var attachment: Array<String>? = null) {
 	/**
 	 * 发送邮件
 	 */

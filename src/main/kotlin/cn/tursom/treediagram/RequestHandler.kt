@@ -21,16 +21,22 @@ data class ReturnData(val state: Boolean, val result: Any?)
 fun handle(request: HttpServletRequest?): String {
 	try {
 		//获取token
-		val token = request!!.getParameter("token") ?: return "{\"state\":false,\"result\":\"no token get\"}"
+		val token = request!!.getParameter("token")
+				?: request.getHeader("token")
+				?: return "{\"state\":false,\"result\":\"no token get\"}"
 		//解析token
-		val tokenParse = TokenData.parseToken(token) ?: return "{\"state\":false,\"result\":\"wrong token\"}"
+		val tokenParse = TokenData.parseToken(token)
+				?: return "{\"state\":false,\"result\":\"wrong token\"}"
 		//获取需要调用的模组名称
-		val modName = request.getParameter("mod") ?: "Echo"
+		val modName = request.getParameter("mod")
+				?: request.getHeader("mod")
+				?: return "{\"state\":false,\"result\":\"not given mod name\"}"
 		//获取需要调用的模组
 		//首先会去系统模组表中查找
 		val mod = getSystemMod(modName)
 		//没有找到的话就去用户模组表中查找
-				?: getUserMod(tokenParse.usr ?: return "{\"state\":false,\"result\":\"user is null\"}", modName)
+				?: getUserMod(tokenParse.usr
+						?: return "{\"state\":false,\"result\":\"user is null\"}", modName)
 				//如果没有找到的话就返回错误信息
 				?: return "{\"state\":false,\"result\":\"mod could not found\"}"
 		//获取调用结果

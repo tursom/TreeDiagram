@@ -14,17 +14,22 @@ import java.net.URLClassLoader
  * 会优先尝试从本地加载模组
  * 本地文件不存在则会从网络加载模组
  *
- * @param config 配置管理器
+ * @param configData 配置管理器
  * @param loadInstantly 是否立即加载，默认为真
  */
-class ModLoader(config: ConfigManager, private val user: String? = null, rootPath: String? = null, loadInstantly: Boolean = true) {
-	//配置数据
-	private val configData: ClassData = config.getData()!!
+class ModLoader(configData: ClassData,
+                private val user: String? = null,
+                rootPath: String? = null,
+                loadInstantly: Boolean = true) {
 	//要加载的类名
 	private val className: Array<String> = configData.classname!!
 	//类加载器
 	private val myClassLoader: ClassLoader? = try {
-		val file = if (rootPath == null) File(configData.path!!) else File(rootPath + configData.path!!)
+		val file = if (rootPath == null) {
+			File(configData.path!!)
+		} else {
+			File(rootPath + configData.path!!)
+		}
 		//如果文件不存在，抛出一个文件不存在异常
 		if (!file.exists()) throw FileNotFoundException()
 		val url = file.toURI().toURL()
@@ -47,7 +52,8 @@ class ModLoader(config: ConfigManager, private val user: String? = null, rootPat
 	 * 辅助构造函数
 	 * config是一个ClassData类的json格式对象
 	 */
-	constructor(config: String, user: String? = null, rootPath: String? = null, loadInstantly: Boolean = true) : this(ConfigManager(config), user, rootPath, loadInstantly)
+	constructor(config: String, user: String? = null, rootPath: String? = null, loadInstantly: Boolean = true)
+			: this(ConfigManager(config).getData(ClassData::class.java)!!, user, rootPath, loadInstantly)
 	
 	/**
 	 * 手动加载模组

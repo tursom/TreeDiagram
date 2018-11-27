@@ -4,14 +4,14 @@ import cn.tursom.treediagram.basemod.BaseMod
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import java.io.Serializable
-import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 用于群发邮件的模组
  * 为每个人发送内容相同的邮件
  */
 class GroupEmail : BaseMod() {
-	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		try {
 			val groupEmailData = GroupEmailData(
 					request["host"],

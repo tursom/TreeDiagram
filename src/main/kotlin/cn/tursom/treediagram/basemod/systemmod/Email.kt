@@ -5,7 +5,7 @@ import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import java.io.Serializable
 import java.util.*
-import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 用于发送单个邮件的模组
@@ -26,7 +26,7 @@ import javax.servlet.ServletRequest
  * attachment 附件（可选）
  */
 class Email : BaseMod() {
-	override fun handle(token: TokenData, request: ServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
 		return try {
 			//提取邮件信息
 			val mailMessage = EmailData(
