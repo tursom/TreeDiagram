@@ -1,6 +1,7 @@
-package cn.tursom.treediagram.systemmod
+package cn.tursom.treediagram.basemod
 
-import cn.tursom.treediagram.BaseMod
+import cn.tursom.treediagram.modinterface.BaseMod
+import cn.tursom.treediagram.modinterface.ModException
 import cn.tursom.treediagram.modloader.ModLoader
 import cn.tursom.treediagram.usermanage.TokenData
 import cn.tursom.treediagram.usermanage.findUser

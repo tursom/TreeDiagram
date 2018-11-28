@@ -1,6 +1,6 @@
 package cn.tursom.treediagram.modloader
 
-import cn.tursom.treediagram.BaseMod
+import cn.tursom.treediagram.modinterface.BaseMod
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
@@ -14,13 +14,14 @@ object ModManager {
 		val modMap = Hashtable<String, BaseMod>()
 		//系统模组列表
 		val systemModList = arrayOf(
-				cn.tursom.treediagram.systemmod.Echo(),
-				cn.tursom.treediagram.systemmod.Email(),
-				cn.tursom.treediagram.systemmod.GroupEmail(),
-				cn.tursom.treediagram.systemmod.MultipleEmail(),
-				cn.tursom.treediagram.systemmod.ModLoader(),
-				cn.tursom.treediagram.systemmod.Upload(),
-				cn.tursom.treediagram.systemmod.GetUploadFileList())
+				cn.tursom.treediagram.basemod.Echo(),
+				cn.tursom.treediagram.basemod.Email(),
+				cn.tursom.treediagram.basemod.GroupEmail(),
+				cn.tursom.treediagram.basemod.MultipleEmail(),
+				cn.tursom.treediagram.basemod.ModLoader(),
+				cn.tursom.treediagram.basemod.Upload(),
+				cn.tursom.treediagram.basemod.MultipleUpload(),
+				cn.tursom.treediagram.basemod.GetUploadFileList())
 		//加载系统模组
 		systemModList.forEach { modObject ->
 			//输出日志信息

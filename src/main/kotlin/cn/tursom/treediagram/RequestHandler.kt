@@ -1,5 +1,6 @@
 package cn.tursom.treediagram
 
+import cn.tursom.treediagram.modinterface.ModException
 import cn.tursom.treediagram.modloader.ModManager.getSystemMod
 import cn.tursom.treediagram.modloader.ModManager.getUserMod
 import cn.tursom.treediagram.usermanage.TokenData
@@ -20,15 +21,15 @@ data class ReturnData(val state: Boolean, val result: Any?)
 fun handle(request: HttpServletRequest?): String {
 	try {
 		//获取token
-		val token = request!!.getParameter("token")
-				?: request.getHeader("token")
+		val token = request!!.getHeader("token")
+				?: request.getParameter("token")
 				?: return "{\"state\":false,\"result\":\"no token get\"}"
 		//解析token
 		val tokenParse = TokenData.parseToken(token)
 				?: return "{\"state\":false,\"result\":\"wrong token\"}"
 		//获取需要调用的模组名称
-		val modName = request.getParameter("mod")
-				?: request.getHeader("mod")
+		val modName = request.getHeader("mod")
+				?: request.getParameter("mod")
 				?: return "{\"state\":false,\"result\":\"not given mod name\"}"
 		//获取需要调用的模组
 		//首先会去系统模组表中查找
@@ -42,7 +43,7 @@ fun handle(request: HttpServletRequest?): String {
 		val result = mod.handle(tokenParse, request)
 		//返回调用结果
 		return Gson().toJson(ReturnData(true, result))
-	} catch (e: BaseMod.ModException) {
+	} catch (e: ModException) {
 		return "{\"state\":false,\"result\":\"${e.message}\"}"
 	} catch (e: Exception) {
 		//如果运行中出现任何异常

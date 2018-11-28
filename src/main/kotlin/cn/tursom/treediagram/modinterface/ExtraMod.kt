@@ -1,16 +1,15 @@
-package cn.tursom.treediagram
+package cn.tursom.treediagram.modinterface
 
-import cn.tursom.treediagram.usermanage.TokenData
 import java.io.File
-import java.io.Serializable
+import java.io.Writer
 import javax.servlet.ServletRequest
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
- * TreeDiagram的所有模组的基类
- * 系统模组与用户模组都是这个类的子类
+ * TreeDiagram的所有强功能模组的基类
  */
-abstract class BaseMod {
+abstract class ExtraMod {
 	/**
 	 * 模组名
 	 * 是调用模组时的依据
@@ -29,7 +28,7 @@ abstract class BaseMod {
 	 * 如果有模组想储存文件请尽量使用这个目录
 	 */
 	val modPath by lazy {
-		val path = "${BaseMod::class.java.getResource("/").path!!}${this::class.java.name}/"
+		val path = "${ExtraMod::class.java.getResource("/").path!!}${this::class.java.name}/"
 		val dir = File(path)
 		if (!dir.exists()) dir.mkdirs()
 		path
@@ -42,11 +41,8 @@ abstract class BaseMod {
 	
 	/**
 	 * 处理模组调用请求
-	 * @param token 解析过后的用户token
-	 * @param request 用户通过get或者post提交的数据
-	 * @return 一个用于表示json数据的对象或者null
 	 */
-	abstract fun handle(token: TokenData, request: HttpServletRequest): Serializable?
+	abstract fun handle(out: Writer, request: HttpServletRequest, response: HttpServletResponse): Any?
 	
 	/**
 	 * 当模组生命周期结束时被调用
@@ -54,15 +50,8 @@ abstract class BaseMod {
 	open fun destroy() {}
 	
 	/**
-	 * 模组运行过程中出现的异常
-	 * 其异常的相关信息存放在message里
-	 */
-	class ModException(message: String?) : Exception(message)
-	
-	/**
 	 * 方便获取ServletRequest里面的数据
 	 * 使得子类中可以直接使用request[ 参数名 ]的形式来获取数据
 	 */
 	operator fun ServletRequest.get(key: String): String? = this.getParameter(key)
 }
-

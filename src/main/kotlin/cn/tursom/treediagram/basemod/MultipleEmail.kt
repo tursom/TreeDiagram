@@ -1,7 +1,7 @@
-package cn.tursom.treediagram.systemmod
+package cn.tursom.treediagram.basemod
 
 import cn.tursom.tools.fromJson
-import cn.tursom.treediagram.BaseMod
+import cn.tursom.treediagram.modinterface.BaseMod
 import cn.tursom.treediagram.datastruct.MultipleEmailData
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
