@@ -38,6 +38,10 @@ class Upload : BaseMod() {
 			"append" -> {
 				FileOutputStream(file, true)
 			}
+			"delete" -> {
+				file.delete()
+				return "file \"$filename\" deleted"
+			}
 			else -> throw ModException("unsupported upload type, " +
 					"please use \"create\" or \"append\"(default) as an upload type")
 		}
@@ -52,7 +56,7 @@ class Upload : BaseMod() {
 		outputStream.flush()
 		outputStream.close()
 		
-		response.setHeader("filename",filename)
+		response.setHeader("filename", filename)
 		//返回上传的文件名
 		return filename
 	}
