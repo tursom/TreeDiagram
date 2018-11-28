@@ -49,10 +49,10 @@ object ModManager {
 		//调用模组的初始化函数
 		mod.init()
 		//将模组的信息加载到系统中
-		if (!systemModMap.contains(mod.modName)) {
-			systemModMap[mod.modName] = mod
-			systemModMap[mod.modName.split('.').last()] = mod
-		}
+		//记得销毁被替代的模组
+		systemModMap[mod.modName]?.destroy()
+		systemModMap[mod.modName] = mod
+		systemModMap[mod.modName.split('.').last()] = mod
 	}
 	
 	/**
@@ -70,6 +70,8 @@ object ModManager {
 			userModMapMap[user] = modMap
 			modMap
 		})
+		//记得销毁被替代的模组
+		userModMap[mod.modName]?.destroy()
 		userModMap[mod.modName] = mod
 		userModMap[mod.modName.split('.').last()] = mod
 		return mod.modName
