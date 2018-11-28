@@ -7,6 +7,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * 文件上传模组
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpServletRequest
  * 返回的是上传到服务器的目录
  */
 class Upload : BaseMod() {
-	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest, response: HttpServletResponse): Serializable? {
 		//确保上传用目录可用
 		val uploadPath = getUploadPath(token.usr!!)
 		if (!File(uploadPath).exists()) {
@@ -50,6 +51,8 @@ class Upload : BaseMod() {
 		}
 		outputStream.flush()
 		outputStream.close()
+		
+		response.setHeader("filename",filename)
 		//返回上传的文件名
 		return filename
 	}

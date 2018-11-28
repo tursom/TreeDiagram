@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import java.io.Serializable
 import java.util.*
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * 用于发送单个邮件的模组
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest
  * attachment 附件（可选）
  */
 class Email : BaseMod() {
-	override fun handle(token: TokenData, request: HttpServletRequest): Serializable? {
+	override fun handle(token: TokenData, request: HttpServletRequest, response: HttpServletResponse): Serializable? {
 		return try {
 			//提取邮件信息
 			val mailMessage = EmailData(

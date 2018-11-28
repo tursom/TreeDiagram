@@ -6,6 +6,7 @@ import cn.tursom.treediagram.modloader.ModManager.getUserMod
 import cn.tursom.treediagram.usermanage.TokenData
 import com.google.gson.Gson
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * 模组调用的返回值
@@ -18,7 +19,7 @@ data class ReturnData(val state: Boolean, val result: Any?)
  * 用于处理一个模组调用请求
  * @param request Servlet的request对象
  */
-fun handle(request: HttpServletRequest?): String {
+fun handle(request: HttpServletRequest?, response: HttpServletResponse): String {
 	try {
 		//获取token
 		val token = request!!.getHeader("token")
@@ -40,7 +41,7 @@ fun handle(request: HttpServletRequest?): String {
 				//如果没有找到的话就返回错误信息
 				?: return "{\"state\":false,\"result\":\"mod could not found\"}"
 		//获取调用结果
-		val result = mod.handle(tokenParse, request)
+		val result = mod.handle(tokenParse, request, response)
 		//返回调用结果
 		return Gson().toJson(ReturnData(true, result))
 	} catch (e: ModException) {
