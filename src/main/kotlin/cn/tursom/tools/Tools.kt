@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cn.tursom.tools
 
 import com.google.gson.Gson

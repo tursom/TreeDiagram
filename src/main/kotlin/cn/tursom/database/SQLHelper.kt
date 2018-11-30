@@ -14,8 +14,7 @@ interface SQLHelper {
 	fun createTable(table: String, keys: Array<String>)
 	
 	/**
-	 * 根据提供的class对象自动化创建表格
-	 * 但是有诸多缺陷，所以不是很建议使用
+	 * 根据class对象自动化创建表格
 	 */
 	fun <T> createTable(table: String, keys: Class<T>)
 	
