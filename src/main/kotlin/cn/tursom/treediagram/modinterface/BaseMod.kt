@@ -58,6 +58,6 @@ abstract class BaseMod {
 	 * 方便获取ServletRequest里面的数据
 	 * 使得子类中可以直接使用request[ 参数名 ]的形式来获取数据
 	 */
-	operator fun ServletRequest.get(key: String): String? = this.getParameter(key)
+	operator fun HttpServletRequest.get(key: String): String? = this.getHeader(key) ?: this.getParameter(key)
 }
 

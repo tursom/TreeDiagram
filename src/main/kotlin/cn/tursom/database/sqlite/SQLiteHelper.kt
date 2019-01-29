@@ -20,7 +20,7 @@ class SQLiteHelper
 /**
  * 创建名为 base.db 的数据库连接
  */
-(val base: String) : SQLHelper {
+(base: String) : SQLHelper {
 	private val connection: Connection
 	
 	init {
@@ -112,6 +112,7 @@ class SQLiteHelper
 	) {
 		val statement = connection.createStatement()
 		try {
+			@Suppress("SqlResolve", "SqlIdentifier")
 			adapter.adapt(
 				if (where == null)
 					statement.executeQuery("SELECT $name FROM $table limit 0,${maxCount ?: Int.MAX_VALUE};")
@@ -145,6 +146,7 @@ class SQLiteHelper
 	) {
 		val statement = connection.createStatement()
 		try {
+			@Suppress("SqlResolve", "SqlIdentifier")
 			adapter.adapt(
 				if (where == null)
 					statement.executeQuery("SELECT $name FROM $table ORDER BY $index DESC limit 0,${maxCount ?: Int.MAX_VALUE};")

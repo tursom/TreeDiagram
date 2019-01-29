@@ -38,6 +38,10 @@ class Upload : BaseMod() {
 			"append" -> {
 				FileOutputStream(file, true)
 			}
+			"delete" -> {
+				file.delete()
+				return "file \"$filename\" deleted"
+			}
 			else -> throw ModException("unsupported upload type, " +
 					"please use \"create\" or \"append\"(default) as an upload type")
 		}

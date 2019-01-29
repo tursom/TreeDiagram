@@ -7,17 +7,7 @@ import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.ArrayList
 
-open class SQLAdapter<T : Any>(val clazz: Class<T>) : ArrayList<T>() {
-	//获取Unsafe
-	private val field: Field by lazy {
-		val field = Unsafe::class.java.getDeclaredField("theUnsafe")
-		//允许通过反射设置属性的值
-		field.isAccessible = true
-		field
-	}
-	//利用Unsafe绕过构造函数获取变量
-	private val unsafe = field.get(null) as Unsafe
-	
+open class SQLAdapter<T : Any>(private val clazz: Class<T>) : ArrayList<T>() {
 	open fun adapt(resultSet: ResultSet) {
 		clear() //清空已储存的数据
 		try {
@@ -78,4 +68,17 @@ open class SQLAdapter<T : Any>(val clazz: Class<T>) : ArrayList<T>() {
 		}
 		add(t)
 	}
+	
+	companion object {
+		//利用Unsafe绕过构造函数获取变量
+		private val unsafe by lazy {
+			val field = Unsafe::class.java.getDeclaredField("theUnsafe")
+			//允许通过反射设置属性的值
+			field.isAccessible = true
+			field.get(null) as Unsafe
+		}
+	}
 }
+
+@Suppress("FunctionName")
+inline fun <reified T : Any> SQLAdapter() = SQLAdapter(T::class.java)
