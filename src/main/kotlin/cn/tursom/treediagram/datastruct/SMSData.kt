@@ -7,4 +7,4 @@ package cn.tursom.treediagram.datastruct
  * @param message 信息内容，具体由服务端模组规定
  * @param nationCode 国家码，如 86 为中国。如何带国家码具体由服务端模组规定
  */
-data class SMSData(var phoneNumbers: String?, var message: String?, var nationCode: String? = "86")
+data class SMSData(val phoneNumbers: String?, val message: String?, val nationCode: String? = "86")

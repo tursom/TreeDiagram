@@ -33,7 +33,7 @@ class Upload : BaseMod() {
 		val outputStream = when (request.getHeader("type") ?: "append") {
 			"create" -> {
 				if (file.exists()) throw ModException("file exist")
-				FileOutputStream(file)
+				else FileOutputStream(file)
 			}
 			"append" -> {
 				FileOutputStream(file, true)
@@ -52,13 +52,16 @@ class Upload : BaseMod() {
 		outputStream.flush()
 		outputStream.close()
 		
-		response.setHeader("filename",filename)
+		response.setHeader("filename", filename)
 		//返回上传的文件名
 		return filename
 	}
 	
 	companion object {
+		@JvmStatic
 		val uploadRootPath = "${MultipleUpload::class.java.getResource("/").path!!}upload/"
+		
+		@JvmStatic
 		fun getUploadPath(user: String) = "$uploadRootPath$user/"
 	}
 }
