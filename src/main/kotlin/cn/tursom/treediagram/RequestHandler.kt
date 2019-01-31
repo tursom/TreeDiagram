@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse
  * @param request Servlet的request对象
  */
 fun handle(request: HttpServletRequest?, response: HttpServletResponse): String {
+	request?.characterEncoding = "utf-8"
 	try {
 		//获取token
 		val token = request!!.getHeader("token")

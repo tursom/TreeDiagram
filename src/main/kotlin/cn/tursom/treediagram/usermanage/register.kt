@@ -40,6 +40,7 @@ private val newServer by lazy {
  * @return 处理结果，json数据
  */
 fun register(request: HttpServletRequest?): String {
+	request?.characterEncoding = "utf-8"
 	//如果数据库内无任何用户，则可以直接创建一个admin权限的用户
 	return if (newServer) {
 		//如果没有数据，说明现在没有任何用户注册
