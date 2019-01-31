@@ -53,6 +53,7 @@ class Upload : BaseMod() {
 			outputStream.write(byteArray)
 			byteArray = inputStream.readBytes()
 		}
+		inputStream.close()
 		outputStream.flush()
 		outputStream.close()
 		
