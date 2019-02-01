@@ -52,7 +52,7 @@ fun register(request: HttpServletRequest?): String {
 		//添加一个admin权限的新用户
 		addUser(username, password, "admin")
 		//返回成功信息
-		"{\"state\":true,\"code\":\"${TokenData.getToken(username)}\"}"
+		"{\"state\":true,\"code\":\"${TokenData.getToken(username, password)}\"}"
 	} else {
 		//解析token
 		val token = TokenData.parseToken(request?.getParameter("token")
@@ -72,7 +72,7 @@ fun register(request: HttpServletRequest?): String {
 				//添加新用户
 				addUser(username, password, level ?: "user")
 				//返回成功信息
-				"{\"state\":true,\"code\":\"${TokenData.getToken(username)}\"}"
+				"{\"state\":true,\"code\":\"${TokenData.getToken(username, password)}\"}"
 			}
 		}
 	}

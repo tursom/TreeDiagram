@@ -16,7 +16,8 @@ import com.google.gson.Gson
  * 由于秘钥是在启动时随机得出的，故所有token都会在服务器重启后失效
  */
 
-data class TokenData(
+@Suppress("DataClassPrivateConstructor")
+data class TokenData private constructor(
 		val usr: String?,  //用户名
 		val lev: String? = run {
 			val user = findUser(usr!!)
@@ -35,9 +36,13 @@ data class TokenData(
 		 * @param username 用户名
 		 * @return 一整个token
 		 */
-		internal fun getToken(username: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String {
-			val body = "$digestFunctionBase64.${gson.toJson(TokenData(username, exp = exp)).base64()}"
-			return "$body.${"$body.$secretKey".md5()}"
+		internal fun getToken(username: String, password: String, exp: Long? = 1000 * 60 * 60 * 24 * 3): String? {
+			return if (tryLogin(username, password)) {
+				val body = "$digestFunctionBase64.${gson.toJson(TokenData(username, exp = exp)).base64()}"
+				"$body.${"$body.$secretKey".md5()}"
+			} else {
+				null
+			}
 		}
 		
 		/**

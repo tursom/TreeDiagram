@@ -17,14 +17,26 @@ fun login(username: String?, password: String?): String {
 		//如果密码为空
 		"{\"state\":false,\"code\":\"password is null\"}"
 	} else {
-		//查询用户数据
-		val userData = findUser(username)
-		if ("$username$password$username$password".sha256() == userData?.password) {
-			//验证成功，签发token
-			"{\"state\":true,\"code\":\"${TokenData.getToken(username)}\"}"
+		//试签发token
+		val token = TokenData.getToken(username, password)
+		if (token != null) {
+			//成功通过验证，获得token
+			"{\"state\":true,\"code\":\"$token\"}"
 		} else {
 			//验证失败
-			"{\"state\":false,\"code\":\"wrong password\"}"
+			"{\"state\":false,\"code\":\"wrong username or password\"}"
 		}
 	}
 }
+
+private val stackTraceCache = Cache<Array<out StackTraceElement>>(50)
+
+fun getStackTraceCache() = stackTraceCache.copy()
+
+fun tryLogin(username: String, password: String): Boolean {
+	stackTraceCache.add(Throwable().stackTrace)
+	//查询用户数据
+	val userData = findUser(username)
+	return "$username$password$username$password".sha256() == userData?.password
+}
+
