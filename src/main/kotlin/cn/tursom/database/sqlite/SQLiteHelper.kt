@@ -3,12 +3,11 @@ package cn.tursom.database.sqlite
 import cn.tursom.database.SQLAdapter
 import cn.tursom.database.SQLHelper
 import org.sqlite.SQLiteException
+import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-import java.util.*
 import java.util.logging.Logger
-import kotlin.collections.ArrayList
 
 
 /**
@@ -16,21 +15,25 @@ import kotlin.collections.ArrayList
  * 实现创建表格、查询、插入和更新功能
  */
 
+@Suppress("SqlDialectInspection")
 class SQLiteHelper
 /**
  * 创建名为 base.db 的数据库连接
  */
 (base: String) : SQLHelper {
 	private val connection: Connection
+	private val path = File(base).absolutePath
 	
 	init {
-		Class.forName("org.sqlite.JDBC")
-		if (base in connectionMap) {
-			connection = connectionMap[base]!!
-		} else {
-			connection = DriverManager.getConnection("jdbc:sqlite:$base") ?: throw CantConnectDataBase()
-			connectionMap[base] = connection
-			connection.autoCommit = false
+		synchronized(connectionMap) {
+			if (base in connectionMap) {
+				connection = connectionMap[path]!!
+			} else {
+				connection = DriverManager.getConnection("jdbc:sqlite:$base") ?: throw CantConnectDataBase()
+				connectionMap[path] = connection
+				connection.autoCommit = false
+			}
+			connectionCount[path] = connectionCount[path] ?: 0 + 1
 		}
 	}
 	
@@ -84,8 +87,8 @@ class SQLiteHelper
 	 * @param maxCount 最大查询数量
 	 */
 	override fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String>, where: Map<String, String>?, maxCount: Int?) {
+			adapter: SQLAdapter<T>, table: String,
+			name: Array<String>, where: Map<String, String>?, maxCount: Int?) {
 		if (where != null) {
 			select(adapter, table, toColumn(name), toWhere(where), maxCount)
 		} else {
@@ -102,22 +105,22 @@ class SQLiteHelper
 	 * @param maxCount 最大查询数量
 	 */
 	override fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String,
-		where: Pair<String, String>, maxCount: Int?, name: Array<String>) {
+			adapter: SQLAdapter<T>, table: String,
+			where: Pair<String, String>, maxCount: Int?, name: Array<String>) {
 		select(adapter, table, name, mapOf(where), maxCount)
 	}
 	
 	override fun <T : Any> select(
-		adapter: SQLAdapter<T>, table: String, name: String, where: String?, maxCount: Int?
+			adapter: SQLAdapter<T>, table: String, name: String, where: String?, maxCount: Int?
 	) {
 		val statement = connection.createStatement()
 		try {
 			@Suppress("SqlResolve", "SqlIdentifier")
 			adapter.adapt(
-				if (where == null)
-					statement.executeQuery("SELECT $name FROM $table limit 0,${maxCount ?: Int.MAX_VALUE};")
-				else
-					statement.executeQuery("SELECT $name FROM $table WHERE $where limit 0,${maxCount ?: Int.MAX_VALUE};")
+					if (where == null)
+						statement.executeQuery("SELECT $name FROM $table limit 0,${maxCount ?: Int.MAX_VALUE};")
+					else
+						statement.executeQuery("SELECT $name FROM $table WHERE $where limit 0,${maxCount ?: Int.MAX_VALUE};")
 			)
 		} catch (e: SQLiteException) {
 			if (e.message != "[SQLITE_ERROR] SQL error or missing database (no such table: $table)") throw e
@@ -126,8 +129,8 @@ class SQLiteHelper
 	}
 	
 	override fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String>, where: Map<String, String>?, index: String, maxCount: Int?) {
+			adapter: SQLAdapter<T>, table: String,
+			name: Array<String>, where: Map<String, String>?, index: String, maxCount: Int?) {
 		if (where != null) {
 			reverseSelect(adapter, table, toColumn(name), toWhere(where), index, maxCount)
 		} else {
@@ -136,23 +139,24 @@ class SQLiteHelper
 	}
 	
 	override fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String,
-		name: Array<String>, where: Pair<String, String>, index: String, maxCount: Int?) {
+			adapter: SQLAdapter<T>, table: String,
+			name: Array<String>, where: Pair<String, String>, index: String, maxCount: Int?) {
 		reverseSelect(adapter, table, name, mapOf(where), index, maxCount)
 	}
 	
 	override fun <T : Any> reverseSelect(
-		adapter: SQLAdapter<T>, table: String, name: String, where: String? , index: String, maxCount: Int?
+			adapter: SQLAdapter<T>, table: String, name: String, where: String?, index: String, maxCount: Int?
 	) {
 		val statement = connection.createStatement()
 		try {
 			@Suppress("SqlResolve", "SqlIdentifier")
 			adapter.adapt(
-				if (where == null)
-					statement.executeQuery("SELECT $name FROM $table ORDER BY $index DESC limit 0,${maxCount ?: Int.MAX_VALUE};")
-				else
-					statement.executeQuery("SELECT $name FROM $table WHERE $where ORDER BY $index DESC limit 0,${maxCount
-						?: Int.MAX_VALUE};")
+					if (where == null)
+						statement.executeQuery("SELECT $name FROM $table ORDER BY $index DESC limit 0,${maxCount
+								?: Int.MAX_VALUE};")
+					else
+						statement.executeQuery("SELECT $name FROM $table WHERE $where ORDER BY $index DESC limit 0,${maxCount
+								?: Int.MAX_VALUE};")
 			)
 		} catch (e: SQLiteException) {
 			if (e.message != "[SQLITE_ERROR] SQL error or missing database (no such table: $table)") throw e
@@ -203,9 +207,9 @@ class SQLiteHelper
 	}
 	
 	override fun update(
-		table: String,
-		set: Map<String, String>,
-		where: Map<String, String>) {
+			table: String,
+			set: Map<String, String>,
+			where: Map<String, String>) {
 		val statement = connection.createStatement()
 		statement.executeUpdate("UPDATE $table SET ${toValue(set)} WHERE ${toWhere(where)};")
 		commit()
@@ -213,7 +217,7 @@ class SQLiteHelper
 	}
 	
 	override fun <T : Any> update(
-		table: String, value: T, where: Map<String, String>
+			table: String, value: T, where: Map<String, String>
 	) {
 		val set = HashMap<String, String>()
 		value.javaClass.declaredFields.forEach {
@@ -251,7 +255,14 @@ class SQLiteHelper
 	}
 	
 	override fun close() {
-		connection.close()
+		synchronized(connectionMap) {
+			connectionCount[path] = connectionCount[path] ?: 1 - 1
+			if (connectionCount[path] == 0) {
+				connectionCount.remove(path)
+				connectionMap.remove(path)
+				connection.close()
+			}
+		}
 	}
 	
 	private fun toKeys(columns: Map<String, String>): Pair<String, String> {
@@ -322,6 +333,10 @@ class SQLiteHelper
 	
 	companion object {
 		private val logger = Logger.getLogger("sqlite")!!
-		private val connectionMap = HashMap<String, Connection>()
+		private val connectionMap by lazy {
+			Class.forName("org.sqlite.JDBC")
+			HashMap<String, Connection>()
+		}
+		private var connectionCount = HashMap<String, Int>()
 	}
 }

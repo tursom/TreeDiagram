@@ -1,9 +1,12 @@
 package cn.tursom.treediagram.usermanage
 
 import cn.tursom.database.SQLAdapter
+import cn.tursom.database.sqlite.SQLiteHelper
 import cn.tursom.treediagram.SystemDatabase
 
 data class UserData(val username: String?, val password: String?, val level: String?)
+
+private val database = SQLiteHelper("${UserData::class.java.getResource("/").path!!}TreeDiagram.db")
 
 internal val userTable = run {
 	SystemDatabase.database.createTable("users", arrayOf("username TEXT not null", "password TEXT not null", "level TEXT not null"))

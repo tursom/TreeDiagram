@@ -1,5 +1,6 @@
 package cn.tursom.treediagram.usermanage
 
+import cn.tursom.database.sqlite.SQLiteHelper
 import cn.tursom.tools.sha256
 
 /**
