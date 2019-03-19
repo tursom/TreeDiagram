@@ -16,7 +16,7 @@ repositories {
 dependencies {
     compileOnly group: 'org.apache.tomcat', name: 'tomcat-jsp-api', version: '8.5.34'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
+                      
     implementation 'org.xerial:sqlite-jdbc:3.21.0.1'
     implementation "com.google.code.gson:gson:2.8.2"
     implementation group: 'javax.mail', name: 'mail', version: '1.4.1'

@@ -33,7 +33,7 @@ class Email : BaseMod() {
 			//提取邮件信息
 			val mailMessage = EmailData(
 					request["host"],
-					request["port"]?.toInt() ?: 465,
+					request["port"]?.toIntOrNull() ?: 465,
 					request["name"],
 					request["password"],
 					request["from"],
