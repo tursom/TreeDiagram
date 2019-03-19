@@ -1,8 +1,5 @@
 package cn.tursom.treediagram.usermanage
 
-import cn.tursom.database.sqlite.SQLiteHelper
-import cn.tursom.tools.sha256
-
 /**
  * 验证用户名和密码并签发token
  * 返回的固定是一个json数据
@@ -28,16 +25,5 @@ fun login(username: String?, password: String?): String {
 			"{\"state\":false,\"code\":\"wrong username or password\"}"
 		}
 	}
-}
-
-private val stackTraceCache = Cache<Array<out StackTraceElement>>(50)
-
-fun getStackTraceCache() = stackTraceCache.copy()
-
-fun tryLogin(username: String, password: String): Boolean {
-	stackTraceCache.add(Throwable().stackTrace)
-	//查询用户数据
-	val userData = findUser(username)
-	return "$username$password$username$password".sha256() == userData?.password
 }
 
